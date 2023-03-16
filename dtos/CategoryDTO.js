@@ -1,3 +1,4 @@
+//sàn lọc dữ liệu,kiểm tra validate (dữ liệu đầu vào)
 const { validateString, validateObjectId } = require("../validation/validation")
 function createCategoryDto(reqBody) {
     const input = reqBody

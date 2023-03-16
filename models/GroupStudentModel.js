@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose")
 const RoleStudentEnums = require("../enums/RoleStudentEnums")
 
 const groupstudentSchema = new mongoose.Schema({

@@ -1,3 +1,5 @@
+const { default: mongoose } = require("mongoose")
+
 const notificationSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -15,6 +17,9 @@ const notificationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "teacher"
     },
+    recipient_id:{
+        type: mongoose.Schema.Types.ObjectId,
+    }
 })
 
 const notification = mongoose.model("notification", notificationSchema)

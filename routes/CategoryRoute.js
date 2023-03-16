@@ -5,7 +5,6 @@ const { createCategoryDto, updateCategoryDto, deleteCategoryDto } = require("../
 const { CustomError } = require("../errors/CustomError")
 
 const { default: mongoose } = require('mongoose')
-
 router
     .post("/", async (req, res) => {
         const session = await mongoose.startSession()

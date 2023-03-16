@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose")
 const RoleEnums = require("../enums/RoleEnums")
 
 const accountSchema = new mongoose.Schema({
