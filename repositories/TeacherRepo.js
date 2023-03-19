@@ -7,5 +7,12 @@ const create = ({ lastName,firstName,phone,email, r_account }, session) => {
 const deleteOne = (id,session) => {
     return teacher.findByIdAndDelete(id,{session})
 }
-module.exports = { create ,deleteOne}
+const getAll = () => {
+    return teacher.find({ active: true })
+}
+const updateOne = ({id,lastName,firstName,phone,email },session) => {
+    return teacher.findOneAndUpdate({ _id: id }, { lastName,firstName,phone,email }, { new: true }).session(session)
+}
+
+module.exports = { create ,deleteOne,getAll,updateOne}
 //xoa mon hoc thi moi quan he giua giang vien sinh vien voi mon hoc se ra sao

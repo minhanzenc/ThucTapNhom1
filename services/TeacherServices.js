@@ -6,4 +6,11 @@ function create(teacherDTO, session) {
 function deleteOne(id,session) {
     return teacherRepo.deleteOne(id,session)
 }
-module.exports = { create ,deleteOne}
+
+function getAll() {
+    return teacherRepo.getAll()
+}
+function update(teacherDTO, session) {
+    return teacherRepo.updateOne(teacherDTO,session)
+}
+module.exports = { create ,deleteOne,getAll,update}
