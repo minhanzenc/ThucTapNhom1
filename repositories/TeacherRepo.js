@@ -15,4 +15,3 @@ const updateOne = ({id,lastName,firstName,phone,email },session) => {
 }
 
 module.exports = { create ,deleteOne,getAll,updateOne}
-//xoa mon hoc thi moi quan he giua giang vien sinh vien voi mon hoc se ra sao
