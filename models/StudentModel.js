@@ -9,7 +9,7 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: 'trường "lastName" phải được truyền vào',
   },
-  class: {
+  classRoom: {
     type: String,
     required: 'trường "class" phải được truyền vào',
   },
@@ -25,7 +25,7 @@ const studentSchema = new mongoose.Schema({
   },
   r_account: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "student",
+    ref: "account",
   },
 });
 

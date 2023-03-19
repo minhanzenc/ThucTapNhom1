@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+const { default: mongoose } = require("mongoose");
+
 const teacherSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -20,7 +21,7 @@ const teacherSchema = new mongoose.Schema({
   },
   r_account: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "teacher",
+    ref: "account",
   },
 });
 
