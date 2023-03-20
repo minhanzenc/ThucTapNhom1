@@ -1,9 +1,9 @@
-const studentRepo = require('../repositories/StudentRepo')
+const studentRepo = require("../repositories/StudentRepo");
 
 function create(studentDTO, session) {
-    return studentRepo.create(studentDTO,session)
+  return studentRepo.create(studentDTO, session);
 }
-function deleteOne(id,session) {
-    return studentRepo.deleteOne(id,session)
+function deleteOne(id, session) {
+  return studentRepo.deleteOne(id, session);
 }
-module.exports = { create,deleteOne }
+module.exports = { create, deleteOne };

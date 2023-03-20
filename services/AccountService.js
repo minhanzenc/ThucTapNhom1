@@ -17,7 +17,11 @@ async function login(userDTO) {
       throw new CustomError("mật khẩu không trùng khớp", 400);
     const signedToken = signToken(foundUser);
     console.log("token service", signedToken);
-    return Promise.resolve(signedToken);
+    return Promise.resolve({
+      token: signedToken,
+      mail: foundUser.email,
+      role: foundUser.role,
+    });
     //return signToken;
   } catch (error) {
     console.log("hello", error);
