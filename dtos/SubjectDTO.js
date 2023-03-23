@@ -23,4 +23,18 @@ function deleteSubjectDTO(id) {
     return { data: { id } }
 
 }
-module.exports = { createSubjectDTO,deleteSubjectDTO }
+function updateSubjectDTO(id, reqBody) {
+    const input = reqBody
+    console.log(input)
+    const errMessages = []
+    if (validateString(input.name))
+        errMessages.push("trường 'name' chưa hợp lệ")
+    if (validateObjectId(input.r_teacher))
+        errMessages.push("trường 'r_teacher' chưa hợp lệ")
+    if (errMessages.length > 0)
+        return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
+
+    const data = { id, name: input.name, r_teacher: input.r_teacher}
+    return { data }
+}
+module.exports = { createSubjectDTO, deleteSubjectDTO,updateSubjectDTO }
