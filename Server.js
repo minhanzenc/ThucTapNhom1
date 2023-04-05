@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const router = require('./routes/Index')
+const fileupload = require("express-fileupload");
 
 const app = express()
 const port  = process.env.PORT | 3003
@@ -15,6 +16,7 @@ const db = mongoose.connection
 db.on("err",console.error.bind(console,"connection error : "))
 db.once("open",()=>{})
 
+app.use(fileupload());
 app.use(express.json())
 app.use(cors({
     origin:"*",

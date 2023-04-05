@@ -12,4 +12,9 @@ function getAll() {
 function update(studentDTO, session) {
     return studentRepo.updateOne(studentDTO,session)
 }
-module.exports = { create,deleteOne,getAll,update }
+
+function createMany(students, session){
+    return studentRepo.createMany(students, session);
+}
+
+module.exports = { create, createMany,deleteOne,getAll,update }
