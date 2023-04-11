@@ -1,17 +1,20 @@
 const { validateString, validateObjectId } = require("../validation/validation")
-function createSubjectDTO(input) {
+function createClassRoomDTO(input) {
     const errMessages = []
 
     if (validateString(input.name))
         errMessages.push("trường 'name' chưa hợp lệ")
+    if (validateString(input.period))
+        errMessages.push("trường 'ca học' chưa hợp lệ")
     if (validateObjectId(input.r_teacher))
         errMessages.push("trường 'r_teacher' chưa hợp lệ")
-
+    if (validateObjectId(input.r_subject))
+        errMessages.push("trường 'r_subject' chưa hợp lệ")
     if (errMessages.length > 0)
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err} ---`, "") }
-    return { data: { name: input.name, r_teacher: input.r_teacher } }
+    return { data: { name: input.name,period: input.period, r_teacher: input.r_teacher, r_subject: input.r_subject } }
 }
-function deleteSubjectDTO(id) {
+function deleteClassRoomDTO(id) {
     const errMessages = []
 
     if (validateObjectId(id))
@@ -23,18 +26,22 @@ function deleteSubjectDTO(id) {
     return { data: { id } }
 
 }
-function updateSubjectDTO(id, reqBody) {
+function updateClassRoomDTO(id, reqBody) {
     const input = reqBody
     console.log(input)
     const errMessages = []
     if (validateString(input.name))
         errMessages.push("trường 'name' chưa hợp lệ")
+    if (validateString(input.period))
+        errMessages.push("trường 'ca học' chưa hợp lệ")
     if (validateObjectId(input.r_teacher))
         errMessages.push("trường 'r_teacher' chưa hợp lệ")
+    if (validateObjectId(input.r_subject))
+        errMessages.push("trường 'r_subject' chưa hợp lệ")
     if (errMessages.length > 0)
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
 
-    const data = { id, name: input.name, r_teacher: input.r_teacher}
+    const data = { id, name: input.name,period: input.period, r_teacher: input.r_teacher, r_subject: input.r_subject }
     return { data }
 }
-module.exports = { createSubjectDTO, deleteSubjectDTO,updateSubjectDTO }
+module.exports = { createClassRoomDTO, deleteClassRoomDTO, updateClassRoomDTO }

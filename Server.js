@@ -5,8 +5,8 @@ const cors = require('cors')
 const router = require('./routes/Index')
 const fileupload = require("express-fileupload");
 
-const app = express()
-const port  = process.env.PORT | 3003
+const app = express();
+const port = process.env.PORT | 3003;
 
 mongoose.connect(
     process.env.MONGO_URI,

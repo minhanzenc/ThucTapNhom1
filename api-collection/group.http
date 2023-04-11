@@ -1,0 +1,33 @@
+@baseUrl=http://localhost:3003
+@resourceName=group
+@your_token=
+
+
+# Products
+
+# @name getNotificationofSubject
+# truyen id cua subject vao param
+GET {{baseUrl}}/{{resourceName}}/teachers/:r_subject
+x-access-token:{{your_token}}
+###
+
+# @name Create-Group
+POST {{baseUrl}}/{{resourceName}}/
+ Authorization: Bearer {{your_token}}
+ Content-Type: application/json
+{
+  "name":"Nhom 4",
+"r_subject":"640c2c3bb5bfe37084175cfb"
+}
+
+# @name ADD-STUDENT-INTO-Group
+POST {{baseUrl}}/{{resourceName}}/student/:r_group
+ Authorization: Bearer {{your_token}}
+ Content-Type: application/json
+{"r_student":"641579f62dd69c8edd25a17c"}
+
+
+# @name Create-Group
+DELETE {{baseUrl}}/{{resourceName}}/:r_group
+x-access-token:{{your_token}}
+###

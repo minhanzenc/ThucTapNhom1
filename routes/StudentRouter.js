@@ -6,6 +6,9 @@ const { default: mongoose } = require('mongoose')
 const { createStudentDTO } = require('../dtos/StudentDTO')
 const { deleteStudentDTO, updateStudentDTO } = require('../dtos/StudentDTO')
 const { readFile } = require('../helpers/excel')
+const nodemailer = require('nodemailer')
+const accountService = require('../services/AccountService')
+const { v4: uuidv4 } = require('uuid');
 router
     .get("/", async (req, res) => {
         try {
@@ -48,12 +51,46 @@ router
 
             const exxcelFile = req.files.excelFile.data;
 
-            const creatingStudents = readFile(exxcelFile);
-            console.log(creatingStudents)
+            let creatingStudents = readFile(exxcelFile);
+            const creatingAccounts = creatingStudents.map(stu => {
+                return {
+                    email: stu.email,
+                    password: uuidv4(),
+                    role: "student"
+                }
+            })
+            const createdAccounts = await accountService.createMany(creatingAccounts, session)
+            creatingStudents = creatingStudents.map(stu => {
+                const foundAccount = createdAccounts.find(a => a.email === stu.email);
+                return {
+                    ...stu,
+                    r_account: foundAccount.id
+                }
+            })
             const createdStudent = await studentService.createMany(creatingStudents)
 
             await session.commitTransaction()
-            res.status(201).json(createdStudent)
+
+            let transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                    user: 'minhanzenc@gmail.com', // generated ethereal user
+                    pass: 'eznlnrubumhqewrb'
+                },
+            });
+
+            // send mail with defined transport object
+            for (const account of createdAccounts) {
+                await transporter.sendMail({
+                    from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+                    to: account.email, // list of receivers0
+                    subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
+                    html: `<h1>mat khau cua ban la: ${account.password}</h1>`, // html body
+                });
+            }
+            res.status(201).json()
 
         } catch (error) {
             await session.abortTransaction();

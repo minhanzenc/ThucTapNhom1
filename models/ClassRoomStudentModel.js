@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose")
 const RoleGroupEnum = require("../enums/RoleGroupEnum")
 
-const subjectSchema = new mongoose.Schema({
+const classRoomStudentSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: RoleGroupEnum
@@ -16,5 +16,5 @@ const subjectSchema = new mongoose.Schema({
     },
 })
 
-const classroomstudent = mongoose.model("classroomstudent", subjectSchema)
+const classroomstudent = mongoose.model("classroomstudent", classRoomStudentSchema)
 module.exports = classroomstudent

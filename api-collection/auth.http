@@ -1,0 +1,11 @@
+@baseUrl=http://localhost:3003
+@resourceName=account
+# Categories
+
+# @name getAllCategories
+POST {{baseUrl}}/{{resourceName}}/login
+Content-Type: application/json
+{
+  "email": "Khoa123@gmail.com",
+  "password": "123456"
+}

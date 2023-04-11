@@ -6,7 +6,6 @@ const create = ({ lastName, firstName, classRoom, phone, email, r_account }, ses
 const createMany = (students, session) => {
     return student.insertMany(students, {session})
 }
-
 const deleteOne = (id, session) => {
     return student.findByIdAndDelete(id, { session })
 }

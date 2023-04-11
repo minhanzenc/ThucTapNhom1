@@ -1,9 +1,13 @@
 const { default: mongoose } = require("mongoose")
 
-const subjectSchema = new mongoose.Schema({
+const classRoomSchema = new mongoose.Schema({
     name: {
         type: String,
         required: 'trường "name" phải được truyền vào'
+    },
+    period: {
+        type: String,
+        required: 'trường "Ca học" phải được truyền vào'
     },
     r_teacher: {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,5 +19,5 @@ const subjectSchema = new mongoose.Schema({
     }
 })
 
-const classroom = mongoose.model("classroom", subjectSchema)
+const classroom = mongoose.model("classroom", classRoomSchema)
 module.exports = classroom
