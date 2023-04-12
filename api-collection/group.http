@@ -26,8 +26,18 @@ POST {{baseUrl}}/{{resourceName}}/student/:r_group
  Content-Type: application/json
 {"r_student":"641579f62dd69c8edd25a17c"}
 
+# @name Get-All-Stuent-In-Group
+// Lấy tất cả sinh viên có trong nhóm
+GET {{baseUrl}}/{{resourceName}}/students/:groupId
+x-access-token:{{your_token}}
+###
 
-# @name Create-Group
+# @name Delete-Group
 DELETE {{baseUrl}}/{{resourceName}}/:r_group
+x-access-token:{{your_token}}
+###
+
+# @name Delete-Student-Without-Group
+DELETE {{baseUrl}}/{{resourceName}}/DeleteStudents/:studentId
 x-access-token:{{your_token}}
 ###

@@ -6,13 +6,14 @@ const Teacher = require("../models/TeacherModel");
 const Subject = require("../models/SubjectModel");
 const GroupStudent = require("../models/GroupStudentModel");
 const CustomError = require("../errors/CustomError");
-const { verifyToken, authorize } = require("../middlewares/VerifyToken");
+const Request = require("../models/RequestModel");
+
 const GroupService = require("../services/GroupService");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
-router.get("/:r_subject", verifyToken, async (req, res) => {
+router.get("/subject/:r_subject", verifyToken, async (req, res) => {
   const { r_subject } = req.params;
   console.log("r_subject ", r_subject);
   try {
@@ -64,7 +65,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
 
 //THEM SINH VIEN VAO NHOM
 //TRUYEN MA SINH VIEN VAO
-router.post("/students/:groupId", verifyToken, async (req, res) => {
+router.post("/students/:groupId", async (req, res) => {
   try {
     const groupId = req.params.groupId;
     console.log("student id ", req.body.r_student);
@@ -89,6 +90,47 @@ router.post("/students/:groupId", verifyToken, async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-module.exports = { router };
 
-//them studen vao nhom router.post('/:groupId/students', async (req, res) => {
+// Lấy tất cả sinh viên có trong nhóm
+
+router.get("/students/:groupId", async (req, res) => {
+  try {
+    const groupStudents = await GroupStudent.find({
+      r_group: req.params.groupId,
+    });
+    const studentIds = groupStudents.map(
+      (groupStudent) => groupStudent.r_student
+    );
+    const students = await Student.find({ _id: { $in: studentIds } });
+    res.status(200).send(students);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+//Xoa studen khỏi nhom
+router.delete("/DeleteStudents/:studentId", async (req, res) => {
+  const groupId = req.body.r_groupId;
+  const studentId = req.params.studentId;
+
+  try {
+    const groupStudent = await GroupStudent.findOneAndUpdate(
+      { r_group: groupId, r_student: studentId },
+      { $unset: { r_student: 1 } },
+      { new: true }
+    );
+    if (!groupStudent) {
+      return res
+        .status(404)
+        .send({ message: "Không tìm thấy sinh viên trong nhóm này" });
+    }
+    return res
+      .status(200)
+      .send({ message: "Xóa sinh viên khỏi nhóm thành công" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({ message: "Lỗi xóa sinh viên khỏi nhóm" });
+  }
+});
+// gửi request cho giao vien
+
+module.exports = { router };

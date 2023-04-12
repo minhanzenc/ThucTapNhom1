@@ -108,4 +108,26 @@ router.get(
     }
   }
 );
+
+//xoa các thông báo dc gửi dến
+// DELETE /notifications/:id
+// Delete a notification by ID
+router.delete("/delete/:id", verifyToken, async (req, res) => {
+  const notificationId = req.params.id;
+
+  try {
+    const notification = await Notification.findOne({ _id: notificationId });
+    if (!notification) {
+      return res.status(404).json({ error: "Notification not found" });
+    }
+
+    await Notification.deleteOne({ _id: notificationId });
+    return res
+      .status(200)
+      .json({ message: "Notification deleted successfully" });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 module.exports = { router };

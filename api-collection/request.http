@@ -1,0 +1,39 @@
+@baseUrl=http://localhost:3003
+@resourceName=group
+@your_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0MGVkMjE0NTgzOWM0NWQ4NTUzZTkzOCIsImVtYWlsIjoiVGhheUJhbmcxMjNAZ21haWwuY29tIiwicm9sZSI6InRlYWNoZXIiLCJpYXQiOjE2NzkxOTc3ODgsImV4cCI6MTY3OTI4NDE4OH0.L1M_heJWmCLoqHZu2GbhbDHAOCsHrHZnlZysY1Vjnp8
+
+
+# Products
+
+# @name getRequest
+GET {{baseUrl}}/{{resourceName}}/request/:id
+x-access-token:{{your_token}}
+###
+
+###
+
+# @name student-send-request
+POST {{baseUrl}}/{{resourceName}}/request
+ Authorization: Bearer {{your_token}}
+ Content-Type: application/json
+{
+  "message":"Yeu cau Doi nhom 4",
+"r_student":"641579f62dd69c8edd25a17c",
+"r_teacher":"641569c23522a2d825e1b60b",
+"r_group":"64185d47473bd5dbfde2aeba",
+"recipient_group":"64185d27473bd5dbfde2aeb6"
+
+}
+
+###
+
+# @name student-send-teacher
+PUT {{baseUrl}}/{{resourceName}}/update-groupstudent/:Request-id
+ Authorization: Bearer {{your_token}}
+ Content-Type: application/json
+
+
+# @name Delete-Request
+DELETE {{baseUrl}}/{{resourceName}}/request/:id
+x-access-token:{{your_token}}
+###
