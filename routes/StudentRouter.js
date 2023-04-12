@@ -12,7 +12,8 @@ const { v4: uuidv4 } = require('uuid');
 router
     .get("/", async (req, res) => {
         try {
-            const student = await studentService.getAll()
+            const {query} = req;
+            const student = await studentService.getAll(query)
             return res.status(200).json(student)
         } catch (error) {
             res.status(500).json(error)
