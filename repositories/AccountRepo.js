@@ -4,6 +4,10 @@ const getAll = () => {
   return Account.find({ active: true });
 };
 
+const createMany = (accounts, session) => {
+  return Account.insertMany(accounts,{session})
+};
+
 const getAllInActive = () => {
   return Account.find({ active: false });
 };
@@ -42,6 +46,7 @@ const updatePassword = ({ id, password }, session) => {
 
 module.exports = {
   getAll,
+  createMany,
   getByEmail,
   getAllInActive,
   getByUsername,

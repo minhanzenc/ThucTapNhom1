@@ -1,17 +1,17 @@
 const { Router } = require('express')
 const router = Router({ mergeParams: true })
-const subjectService = require("../services/SubjectServices")
+const classRoomServices = require("../services/ClassRoomServices")
 const { CustomError } = require("../errors/CustomError")
 
 const { default: mongoose } = require('mongoose')
-const { createSubjectDTO } = require('../dtos/SubjectDTO')
-const { deleteSubjectDTO,updateSubjectDTO } = require('../dtos/SubjectDTO')
+const { createClassRoomDTO,deleteClassRoomDTO,updateClassRoomDTO } = require('../dtos/ClassRoomDTO')
+
 
 router
     .get("/", async (req, res) => {
         try {
-            const subject = await subjectService.getAll()
-            return res.status(200).json(subject)
+            const classRoom = await classRoomServices.getAll()
+            return res.status(200).json(classRoom)
         } catch (error) {
             res.status(500).json(error)
         }
@@ -20,12 +20,12 @@ router
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const subjectDTO = createSubjectDTO(req.body);
+            const classRoomDTO = createClassRoomDTO(req.body);
 
-            if (subjectDTO.hasOwnProperty("errMessage"))
-                throw new CustomError(subjectDTO.errMessage, 400)
+            if (classRoomDTO.hasOwnProperty("errMessage"))
+                throw new CustomError(classRoomDTO.errMessage, 400)
 
-            const createSubject = await subjectService.create(subjectDTO.data, session);
+            const createSubject = await classRoomServices.create(classRoomDTO.data, session);
 
             await session.commitTransaction()
             res.status(201).json(createSubject)
@@ -46,10 +46,10 @@ router
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const subjectDTO = deleteSubjectDTO(req.params.id)
-            if (subjectDTO.hasOwnProperty("errMessage"))
-                throw new CustomError(subjectDTO.errMessage, 400)
-            await subjectService.deleteOne(subjectDTO.data.id, session)
+            const classRoomDTO = deleteClassRoomDTO(req.params.id)
+            if (classRoomDTO.hasOwnProperty("errMessage"))
+                throw new CustomError(classRoomDTO.errMessage, 400)
+            await classRoomServices.deleteOne(classRoomDTO.data.id, session)
             await session.commitTransaction()
             res.status(201).json({message: "xoa thanh cong"})
         } catch (error) {
@@ -67,10 +67,10 @@ router
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const subjectDTO = updateSubjectDTO(req.params.id,req.body)
-            if (subjectDTO.hasOwnProperty("errMessage"))
-                throw new CustomError(subjectDTO.errMessage, 400)
-            const updatedSubject = await subjectService.update({...subjectDTO.data}, session)
+            const classRoomDTO = updateClassRoomDTO(req.params.id,req.body)
+            if (classRoomDTO.hasOwnProperty("errMessage"))
+                throw new CustomError(classRoomDTO.errMessage, 400)
+            const updatedSubject = await classRoomServices.update({...classRoomDTO.data}, session)
             await session.commitTransaction()
             res.status(201).json(updatedSubject)
 

@@ -10,7 +10,8 @@ const { verifyToken } = require("../middlewares/VerifyToken");
 
 const { default: mongoose } = require("mongoose");
 
-router.post("/login", async (req, res) => {
+router
+.post("/login", async (req, res) => {
   try {
     const userDTO = loginAccountDto(req.body);
     if (userDTO.hasOwnProperty("errMessage"))

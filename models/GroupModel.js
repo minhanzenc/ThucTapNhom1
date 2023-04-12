@@ -9,6 +9,10 @@ const groupSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "subject",
   },
+  r_subject:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"subject"
+}
 });
 
 const group = mongoose.model("group", groupSchema);

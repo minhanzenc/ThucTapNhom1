@@ -36,4 +36,8 @@ async function login(userDTO) {
   }
 }
 
-module.exports = { login };
+function createMany(accounts, session) {
+  return accountRepo.createMany(accounts, session)
+}
+
+module.exports = { login, createMany };

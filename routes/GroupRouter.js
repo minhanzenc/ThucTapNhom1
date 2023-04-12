@@ -9,7 +9,6 @@ const CustomError = require("../errors/CustomError");
 const Request = require("../models/RequestModel");
 
 const GroupService = require("../services/GroupService");
-const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
