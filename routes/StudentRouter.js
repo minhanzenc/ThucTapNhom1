@@ -10,18 +10,18 @@ const nodemailer = require('nodemailer')
 const accountService = require('../services/AccountService')
 const { v4: uuidv4 } = require('uuid');
 const { verify } = require('crypto')
-const {verifyToken, authorize}=require("../middlewares/VerifyToken")
+const { verifyToken, authorize } = require("../middlewares/VerifyToken")
 router
-    .get("/",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
+    .get("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
         try {
-            const {query} = req;
+            const { query } = req;
             const student = await studentService.getAll(query)
             return res.status(200).json(student)
         } catch (error) {
             res.status(500).json(error)
         }
     })
-    .post("/",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
+    .post("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -33,7 +33,8 @@ router
                 password: uuidv4(),
                 role: "student"
             }, session)
-            const createdStudent = await studentService.create({...studentDTO.data, r_account: createdAccount.id}, session);
+            console.log(createdAccount)
+            const createdStudent = await studentService.create({ ...studentDTO.data, r_account: createdAccount[0]._id }, session);
             await session.commitTransaction()
             // let transporter = nodemailer.createTransport({
             //     host: "smtp.gmail.com",
@@ -67,7 +68,7 @@ router
         }
 
     })
-    .post("/import-by-excel",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
+    .post("/import-by-excel", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -127,7 +128,7 @@ router
         }
 
     })
-    .delete("/:id",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
+    .delete("/:id", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -148,7 +149,7 @@ router
             console.error(error.toString())
         }
     })
-    .put("/:id",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
+    .put("/:id", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
