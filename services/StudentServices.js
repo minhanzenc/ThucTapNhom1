@@ -6,8 +6,8 @@ function create(studentDTO, session) {
 function deleteOne(id, session) {
   return studentRepo.deleteOne(id, session);
 }
-function getAll() {
-  return studentRepo.getAll();
+function getAll(query) {
+  return studentRepo.getAll(query);
 }
 function update(studentDTO, session) {
   return studentRepo.updateOne(studentDTO, session);
