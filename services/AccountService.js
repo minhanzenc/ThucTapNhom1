@@ -11,7 +11,6 @@ async function login(userDTO) {
     //   userDTO.password,
     //   foundUser.password
     // );
-    console.log(foundUser);
     const isSamePassword = userDTO.password === foundUser.password;
     if (!isSamePassword)
       throw new CustomError("mật khẩu không trùng khớp", 400);
@@ -24,13 +23,16 @@ async function login(userDTO) {
     });
     //return signToken;
   } catch (error) {
-    console.log("hello", error);
     return Promise.reject(new CustomError(error.toString(), 500));
   }
+}
+
+function create(account,session){
+  return accountRepo.create(account,session)
 }
 
 function createMany(accounts, session) {
   return accountRepo.createMany(accounts, session)
 }
 
-module.exports = { login, createMany };
+module.exports = { login, createMany, create };

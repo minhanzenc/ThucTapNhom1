@@ -12,4 +12,7 @@ function getAll() {
 function update(classRoomDTO, session) {
   return classRoomRepo.updateOne(classRoomDTO, session);
 }
-module.exports = { create, deleteOne, getAll, update };
+function getByTeacherId(teacherId){
+  return classRoomRepo.getByTeacherId(teacherId)
+}
+module.exports = { create, deleteOne, getAll, update,getByTeacherId };

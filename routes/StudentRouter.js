@@ -9,8 +9,10 @@ const { readFile } = require('../helpers/excel')
 const nodemailer = require('nodemailer')
 const accountService = require('../services/AccountService')
 const { v4: uuidv4 } = require('uuid');
+const { verify } = require('crypto')
+const {verifyToken, authorize}=require("../middlewares/VerifyToken")
 router
-    .get("/", async (req, res) => {
+    .get("/",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         try {
             const student = await studentService.getAll()
             return res.status(200).json(student)
@@ -18,18 +20,38 @@ router
             res.status(500).json(error)
         }
     })
-    .post("/", async (req, res) => {
+    .post("/",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
             const studentDTO = createStudentDTO(req.body);
-            console.log(studentDTO)
             if (studentDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(studentDTO.errMessage, 400)
-
-            const createdStudent = await studentService.create(studentDTO.data, session);
-
+            const createdAccount = await accountService.create({
+                email: studentDTO.data.email,
+                password: uuidv4(),
+                role: "student"
+            }, session)
+            const createdStudent = await studentService.create({...studentDTO.data, r_account: createdAccount.id}, session);
             await session.commitTransaction()
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false, // true for 465, false for other ports
+            //     auth: {
+            //         user: 'minhanzenc@gmail.com', // generated ethereal user
+            //         pass: 'eznlnrubumhqewrb'
+            //     },
+            // });
+
+            // // send mail with defined transport object
+            //     await transporter.sendMail({
+            //         from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+            //         to: createdAccount[0].email, // list of receivers0
+            //         subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
+            //         html: `<h1>mat khau cua ban la: ${createdAccount[0].password}</h1>`, // html body
+            //     });
+
             res.status(201).json(createdStudent)
 
         } catch (error) {
@@ -44,7 +66,7 @@ router
         }
 
     })
-    .post("/import-by-excel", async (req, res) => {
+    .post("/import-by-excel",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -71,26 +93,26 @@ router
 
             await session.commitTransaction()
 
-            let transporter = nodemailer.createTransport({
-                host: "smtp.gmail.com",
-                port: 587,
-                secure: false, // true for 465, false for other ports
-                auth: {
-                    user: 'minhanzenc@gmail.com', // generated ethereal user
-                    pass: 'eznlnrubumhqewrb'
-                },
-            });
+            // let transporter = nodemailer.createTransport({
+            //     host: "smtp.gmail.com",
+            //     port: 587,
+            //     secure: false, // true for 465, false for other ports
+            //     auth: {
+            //         user: 'minhanzenc@gmail.com', // generated ethereal user
+            //         pass: 'eznlnrubumhqewrb'
+            //     },
+            // });
 
-            // send mail with defined transport object
-            for (const account of createdAccounts) {
-                await transporter.sendMail({
-                    from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
-                    to: account.email, // list of receivers0
-                    subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
-                    html: `<h1>mat khau cua ban la: ${account.password}</h1>`, // html body
-                });
-            }
-            res.status(201).json()
+            // // send mail with defined transport object
+            // for (const account of createdAccounts) {
+            //     await transporter.sendMail({
+            //         from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+            //         to: account.email, // list of receivers0
+            //         subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
+            //         html: `<h1>mat khau cua ban la: ${account.password}</h1>`, // html body
+            //     });
+            // }
+            res.status(201).json(createdStudent)
 
         } catch (error) {
             await session.abortTransaction();
@@ -104,7 +126,7 @@ router
         }
 
     })
-    .delete("/:id", async (req, res) => {
+    .delete("/:id",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -125,7 +147,7 @@ router
             console.error(error.toString())
         }
     })
-    .put("/:id", async (req, res) => {
+    .put("/:id",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {

@@ -3,7 +3,7 @@ const ObjectId = require('mongoose').Types.ObjectId
 
 function validateString(input) {
   if (
-    typeof (input) !== "string" ||
+    typeof (input) !== "string" || 
     input === null ||
     input === undefined ||
     input.trim() === ""

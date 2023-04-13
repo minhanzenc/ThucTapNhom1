@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const router = Router({ mergeParams: true })
 const teacherService = require("../services/TeacherServices")
+const classRoomServices = require("../services/ClassRoomServices")
 const { CustomError } = require("../errors/CustomError")
 
 const { default: mongoose } = require('mongoose')
@@ -46,6 +47,11 @@ router
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
+            const asd= await classRoomServices.getByTeacherId(req.params.id)
+            if(asd.length>0)
+            {
+                throw new CustomError("Không xóa được vì có tồn tại trong classroom",400)
+            }
             const teacherDTO = deleteTeacherDTO(req.params.id)
             if (teacherDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(teacherDTO.errMessage, 400)

@@ -5,9 +5,9 @@ const groupSchema = new mongoose.Schema({
     type: String,
     required: 'trường "name" phải được truyền vào',
   },
-  r_subject: {
+  r_classroom: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "subject",
+    ref: "classroom",
   },
   r_subject:{
     type: mongoose.Schema.Types.ObjectId,

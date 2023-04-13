@@ -10,8 +10,9 @@ const deleteOne = (id, session) => {
   return teacher.findByIdAndDelete(id, { session });
 };
 const getAll = () => {
-  return teacher.find({ active: true });
+  return teacher.find({});
 };
+
 const updateOne = ({ id, lastName, firstName, phone, email }, session) => {
   return teacher
     .findOneAndUpdate(

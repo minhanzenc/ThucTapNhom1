@@ -10,11 +10,9 @@ function createTeacherDTO(input) {
         errMessages.push("trường 'phone' chưa hợp lệ")
     if (validateEmail(input.email))
         errMessages.push("trường 'email' chưa hợp lệ")
-    if (validateObjectId(input.r_account))
-        errMessages.push("trường 'r_account' chưa hợp lệ")
     if (errMessages.length > 0)
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err} ---`, "") }
-    return { data: { lastName: input.lastName, firstName: input.firstName, phone: input.phone, email: input.email, r_account: input.r_account } }
+    return { data: { lastName: input.lastName, firstName: input.firstName, phone: input.phone, email: input.email } }
 }
 function deleteTeacherDTO(id) {
     const errMessages = []

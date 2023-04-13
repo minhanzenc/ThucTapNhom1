@@ -5,10 +5,10 @@ const { CustomError } = require("../errors/CustomError")
 
 const { default: mongoose } = require('mongoose')
 const { createClassRoomDTO,deleteClassRoomDTO,updateClassRoomDTO } = require('../dtos/ClassRoomDTO')
-
+const {verifyToken, authorize}=require("../middlewares/VerifyToken")
 
 router
-    .get("/", async (req, res) => {
+    .get("/",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         try {
             const classRoom = await classRoomServices.getAll()
             return res.status(200).json(classRoom)
@@ -16,7 +16,7 @@ router
             res.status(500).json(error)
         }
     })
-    .post("/", async (req, res) => {
+    .post("/",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -42,7 +42,7 @@ router
         }
 
     })
-    .delete("/:id",async (req,res) => {
+    .delete("/:id",verifyToken,authorize(["teacher","admin"]),async (req,res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -63,7 +63,7 @@ router
             console.error(error.toString())
         }
     })
-    .put("/:id", async (req, res) => {
+    .put("/:id",verifyToken,authorize(["teacher","admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
