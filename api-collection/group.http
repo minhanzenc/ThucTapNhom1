@@ -5,9 +5,9 @@
 
 # Products
 
-# @name getNotificationofSubject
+# @name getGroupofClassRoom
 # truyen id cua subject vao param
-GET {{baseUrl}}/{{resourceName}}/teachers/:r_subject
+GET {{baseUrl}}/{{resourceName}}/classroom/:r_classroom
 x-access-token:{{your_token}}
 ###
 
@@ -17,7 +17,7 @@ POST {{baseUrl}}/{{resourceName}}/
  Content-Type: application/json
 {
   "name":"Nhom 4",
-"r_subject":"640c2c3bb5bfe37084175cfb"
+"r_classroom":"640c2c3bb5bfe37084175cfb"
 }
 
 # @name ADD-STUDENT-INTO-Group
@@ -26,8 +26,18 @@ POST {{baseUrl}}/{{resourceName}}/student/:r_group
  Content-Type: application/json
 {"r_student":"641579f62dd69c8edd25a17c"}
 
+# @name Get-All-Stuent-In-Group
+// Lấy tất cả sinh viên có trong nhóm
+GET {{baseUrl}}/{{resourceName}}/students/:groupId
+x-access-token:{{your_token}}
+###
 
-# @name Create-Group
+# @name Delete-Group
 DELETE {{baseUrl}}/{{resourceName}}/:r_group
+x-access-token:{{your_token}}
+###
+
+# @name Delete-Student-Without-Group
+DELETE {{baseUrl}}/{{resourceName}}/DeleteStudents/:studentId
 x-access-token:{{your_token}}
 ###

@@ -14,6 +14,10 @@ const groupstudentSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "student",
   },
+  r_classroom: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "classroom",
+  },
 });
 
 const groupstudent = mongoose.model("groupstudent", groupstudentSchema);

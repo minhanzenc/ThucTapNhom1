@@ -1,5 +1,7 @@
 const { CustomError } = require("../errors/CustomError");
 const accountRepo = require("../repositories/AccountRepo");
+const Student = require("../models/StudentModel");
+const Teacher = require("../models/TeacherModel");
 const bcrypt = require("bcrypt");
 const { signToken } = require("../helpers/signToken");
 
@@ -11,11 +13,17 @@ async function login(userDTO) {
     //   userDTO.password,
     //   foundUser.password
     // );
+
     const isSamePassword = userDTO.password === foundUser.password;
     if (!isSamePassword)
       throw new CustomError("mật khẩu không trùng khớp", 400);
     const signedToken = signToken(foundUser);
-    console.log("token service", signedToken);
+    let ChildId;
+    if (foundUser.role == "teacher") {
+      ChildId = await Teacher.find({ r_account: foundUser.id });
+    } else {
+      ChildId = await Student.find({ r_account: foundUser.id });
+    }
     return Promise.resolve({
       token: signedToken,
       mail: foundUser.email,
@@ -27,12 +35,12 @@ async function login(userDTO) {
   }
 }
 
-function create(account,session){
-  return accountRepo.create(account,session)
+function create(account, session) {
+  return accountRepo.create(account, session);
 }
 
 function createMany(accounts, session) {
-  return accountRepo.createMany(accounts, session)
+  return accountRepo.createMany(accounts, session);
 }
 
 module.exports = { login, createMany, create };

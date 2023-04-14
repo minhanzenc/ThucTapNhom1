@@ -1,10 +1,6 @@
 const { default: mongoose } = require("mongoose");
 
-const notificationSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: 'trường "title" phải được truyền vào',
-  },
+const requestSchema = new mongoose.Schema({
   message: {
     type: String,
     required: 'trường "message" phải được truyền vào',
@@ -21,14 +17,15 @@ const notificationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "group",
   },
-  r_subject: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "subject",
+  status: {
+    type: Boolean,
+    required: 'trường "status" phải được truyền vào',
   },
-  recipient_id: {
+  recipient_group: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "group",
   },
 });
 
-const notification = mongoose.model("notification", notificationSchema);
-module.exports = notification;
+const request = mongoose.model("request", requestSchema);
+module.exports = request;

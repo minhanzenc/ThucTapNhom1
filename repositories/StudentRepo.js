@@ -19,13 +19,16 @@ const getAll = async ({ page = 1, pageSize = 10 }) => {
   const take = (page - 1) * pageSize;
   const [countStudent, students] = await Promise.all([
     student.count({ active: true }),
-    student.find({ active: true }).skip(take).limit(pageSize),
+    student.find({ active: true }).skip(take).limit(pageSize).sort({ _id: -1 }),
   ]);
 
   return {
     total: countStudent,
     students,
   };
+};
+const getOneById = (id) => {
+  return student.findById({ _id: id, active: true });
 };
 const updateOne = (
   { id, lastName, firstName, phone, classRoom, email },
@@ -40,4 +43,11 @@ const updateOne = (
     .session(session);
 };
 
-module.exports = { create, deleteOne, getAll, updateOne, createMany };
+module.exports = {
+  create,
+  deleteOne,
+  getAll,
+  updateOne,
+  createMany,
+  getOneById,
+};
