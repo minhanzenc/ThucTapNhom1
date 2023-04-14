@@ -77,7 +77,7 @@ router
             const teacherDTO = updateTeacherDTO(req.params.id, req.body)
             if (teacherDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(teacherDTO.errMessage, 400)
-            const updatedTeacher = await teacherService.update({ ...teacherDTO.data }, session)
+            const updatedTeacher = await teacherService.update(teacherDTO.data, session)
             await session.commitTransaction()
             res.status(201).json(updatedTeacher)
 
