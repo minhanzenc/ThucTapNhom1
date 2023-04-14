@@ -31,13 +31,16 @@ async function login(userDTO) {
     });
     //return signToken;
   } catch (error) {
-    console.log("hello", error);
     return Promise.reject(new CustomError(error.toString(), 500));
   }
+}
+
+function create(account, session) {
+  return accountRepo.create(account, session);
 }
 
 function createMany(accounts, session) {
   return accountRepo.createMany(accounts, session);
 }
 
-module.exports = { login, createMany };
+module.exports = { login, createMany, create };
