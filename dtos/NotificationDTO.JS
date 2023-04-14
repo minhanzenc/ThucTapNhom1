@@ -31,6 +31,7 @@ function sendNotificationDto(reqBody, recipient) {
     },
   };
 }
+
 function getNotificationDTO(reqParams) {
   const errMessages = [];
 

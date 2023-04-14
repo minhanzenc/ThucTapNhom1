@@ -5,36 +5,38 @@ const Student = require("../models/StudentModel");
 const Teacher = require("../models/TeacherModel");
 const Subject = require("../models/SubjectModel");
 const GroupStudent = require("../models/GroupStudentModel");
+const ClassRoom = require("../models/ClassRoomModel");
 const CustomError = require("../errors/CustomError");
 const Request = require("../models/RequestModel");
+const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 
 const GroupService = require("../services/GroupService");
 
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
-router.get("/subject/:r_subject", verifyToken, async (req, res) => {
-  const { r_subject } = req.params;
-  console.log("r_subject ", r_subject);
+router.get("/classroom/:r_classroom", verifyToken, async (req, res) => {
+  const { r_classroom } = req.params;
+  console.log("r_classroom ", r_classroom);
   try {
-    const groups = await Group.find({ r_subject });
+    const groups = await Group.find({ r_classroom });
     res.json(groups);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-// TAO GROUP .TRUYEN TEN NHOM VOI R_SUBJECT
+// TAO GROUP .TRUYEN TEN NHOM VOI R_classroom
 router.post("/", verifyToken, async (req, res) => {
-  const { name, r_subject } = req.body;
+  const { name, r_classroom } = req.body;
 
   try {
-    // Kiểm tra r_subject có tồn tại trong SubjectModel không
-    const subject = await Subject.findById(r_subject);
-    if (!subject) {
-      return res.status(400).json({ message: "r_subject không hợp lệ" });
+    // Kiểm tra r_classroom có tồn tại trong SubjectModel không
+    const classroom = await ClassRoom.findById(r_classroom);
+    if (!classroom) {
+      return res.status(400).json({ message: "r_classroom không hợp lệ" });
     }
 
-    const newGroup = new Group({ name, r_subject });
+    const newGroup = new Group({ name, r_classroom });
     await newGroup.save();
 
     res.json(newGroup);
@@ -76,7 +78,7 @@ router.post("/students/:groupId", async (req, res) => {
     const groupStudent = new GroupStudent({
       r_group: group._id,
       r_student: req.body.r_student,
-      r_subject: group.r_subject,
+      r_classroom: group.r_classroom,
       role: "member",
     });
     await groupStudent.save();
@@ -97,11 +99,14 @@ router.get("/students/:groupId", async (req, res) => {
     const groupStudents = await GroupStudent.find({
       r_group: req.params.groupId,
     });
+    const group = await Group.findById(req.params.groupId).populate(
+      "r_classroom"
+    );
     const studentIds = groupStudents.map(
       (groupStudent) => groupStudent.r_student
     );
     const students = await Student.find({ _id: { $in: studentIds } });
-    res.status(200).send(students);
+    res.status(200).send({ students, group });
   } catch (error) {
     res.status(500).send(error);
   }

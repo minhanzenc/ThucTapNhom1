@@ -5,9 +5,9 @@ const discussSchema = new mongoose.Schema({
     type: String,
     required: 'trường "message" phải được truyền vào',
   },
-  r_subject: {
+  r_classroom: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "subject",
+    ref: "classroom",
   },
   r_group: {
     type: mongoose.Schema.Types.ObjectId,

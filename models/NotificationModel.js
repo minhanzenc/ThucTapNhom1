@@ -22,8 +22,11 @@ const notificationSchema = new mongoose.Schema({
     ref: "group",
   },
   r_subject: {
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"subject"
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "subject",
+  },
+  recipient_id: {
+    type: mongoose.Schema.Types.ObjectId,
   },
 });
 

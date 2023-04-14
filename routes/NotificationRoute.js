@@ -71,7 +71,7 @@ router.post(
 router.get(
   "/students/:id",
   verifyToken,
-  authorize(["student"]),
+  authorize(["student", "teacher"]),
   async (req, res) => {
     try {
       const notificationDTO = getNotificationDTO(req.params);
