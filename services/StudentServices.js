@@ -9,12 +9,22 @@ function deleteOne(id, session) {
 function getAll(query) {
   return studentRepo.getAll(query);
 }
+function getOneById(id) {
+  return studentRepo.getOneById(id);
+}
 function update(studentDTO, session) {
   return studentRepo.updateOne(studentDTO, session);
 }
 
-function createMany(students, session){
-    return studentRepo.createMany(students, session);
+function createMany(students, session) {
+  return studentRepo.createMany(students, session);
 }
 
-module.exports = { create, createMany,deleteOne,getAll,update }
+module.exports = {
+  create,
+  createMany,
+  deleteOne,
+  getAll,
+  update,
+  getOneById,
+};
