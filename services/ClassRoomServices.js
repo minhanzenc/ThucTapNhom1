@@ -6,16 +6,27 @@ function create(classRoomDTO, session) {
 function deleteOne(id, session) {
   return classRoomRepo.deleteOne(id, session);
 }
-function getAll(teacherId,query) {
-  return classRoomRepo.getAll(teacherId,query);
+function getAll(teacherId, query) {
+  return classRoomRepo.getAll(teacherId, query);
 }
 function update(classRoomDTO, session) {
   return classRoomRepo.updateOne(classRoomDTO, session);
 }
-function getByTeacherId(teacherId){
-  return classRoomRepo.getByTeacherId(teacherId)
+function getByTeacherId(teacherId) {
+  return classRoomRepo.getByTeacherId(teacherId);
 }
-function getBySubjectId(subjectId){
-  return classRoomRepo.getBySubjectId(subjectId)
+function getBySubjectId(subjectId) {
+  return classRoomRepo.getBySubjectId(subjectId);
 }
-module.exports = { create, deleteOne, getAll, update,getByTeacherId ,getBySubjectId};
+function getOneById(id) {
+  return classRoomRepo.getOneById(id);
+}
+module.exports = {
+  create,
+  deleteOne,
+  getAll,
+  update,
+  getOneById,
+  getByTeacherId,
+  getBySubjectId,
+};

@@ -22,7 +22,6 @@ router
           const students = await classRoomStudentServices.getByClassRoomId(
             classRoom._id
           );
-          console.log(students);
           return { ...classRoom, students };
         })
       );
@@ -32,6 +31,20 @@ router
       res.status(500).json(error);
     }
   })
+  .get(
+    "/:id",
+    verifyToken,
+    authorize(["teacher", "admin"]),
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const classRoom = await classRoomServices.getOneById(id);
+        return res.status(200).json(classRoom);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    }
+  )
   .post("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();

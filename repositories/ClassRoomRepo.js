@@ -13,7 +13,6 @@ const deleteOne = (id, session) => {
 // }
 const getAll = async (teacherId, { page = 1, pageSize = 10 }) => {
   const take = (page - 1) * pageSize;
-  console.log(teacherId);
   const [countClassroom, classRooms] = await Promise.all([
     classRoom.count({}),
     classRoom
@@ -23,7 +22,6 @@ const getAll = async (teacherId, { page = 1, pageSize = 10 }) => {
       .sort({ _id: -1 })
       .lean(),
   ]);
-  console.log(countClassroom, classRooms);
   return {
     total: countClassroom,
     classRooms,
@@ -49,10 +47,14 @@ const updateOne = ({ id, name, period, r_teacher, r_subject }, session) => {
     )
     .session(session);
 };
+const getOneById = (id) => {
+  return classRoom.findById({ _id: id, active: true });
+};
 module.exports = {
   create,
   deleteOne,
   getAll,
+  getOneById,
   updateOne,
   getByTeacherId,
   getBySubjectId,
