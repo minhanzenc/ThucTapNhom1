@@ -6,8 +6,8 @@ function create(classRoomDTO, session) {
 function deleteOne(id, session) {
   return classRoomRepo.deleteOne(id, session);
 }
-function getAll(teacherId) {
-  return classRoomRepo.getAll(teacherId);
+function getAll(teacherId,query) {
+  return classRoomRepo.getAll(teacherId,query);
 }
 function update(classRoomDTO, session) {
   return classRoomRepo.updateOne(classRoomDTO, session);

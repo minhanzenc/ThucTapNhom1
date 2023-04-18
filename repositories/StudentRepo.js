@@ -18,10 +18,10 @@ const deleteOne = (id, session) => {
 const getAll = async ({ page = 1, pageSize = 10 }) => {
   const take = (page - 1) * pageSize;
   const [countStudent, students] = await Promise.all([
-    student.count({ active: true }),
-    student.find({ active: true }).skip(take).limit(pageSize).sort({ _id: -1 }),
+    student.count({ }),
+    student.find({ }).skip(take).limit(pageSize).sort({ _id: -1 }),
   ]);
-
+  console.log(countStudent, students)
   return {
     total: countStudent,
     students,

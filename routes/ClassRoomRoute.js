@@ -11,9 +11,10 @@ const { verifyToken, authorize } = require("../middlewares/VerifyToken")
 router
     .get("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
         try {
-            let classRooms = await classRoomServices.getAll(req.user.id)
-            classRooms = await Promise.all(
-                classRooms.map(
+            const {query} =req
+            let foundCLassRooms = await classRoomServices.getAll(req.user.id,query)//
+            const classRooms = await Promise.all(
+                foundCLassRooms.classRooms.map(
                     async (classRoom) => {
                         const students = await classRoomStudentServices.getByClassRoomId(classRoom._id);
                         return {classRoom,students}

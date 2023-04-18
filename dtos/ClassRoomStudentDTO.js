@@ -19,5 +19,15 @@ function createClassRoomStudentDto(reqBody) {
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err} ---`, "") }
     return { data: { role: input.role, r_classroom: input.r_classroom, r_student: input.r_student } }
 }
-
-module.exports = { createClassRoomStudentDto }
+function deleteClassRoomStudentDto(id)
+{
+    const errMessage=[]
+    if(validateObjectId(id)){
+        errMessage.push("ID không hợp lệ")
+    }
+    if(errMessage.leng>0){
+        return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
+    }
+    return {data:{id}}
+}
+module.exports = { createClassRoomStudentDto,deleteClassRoomStudentDto }
