@@ -2,8 +2,11 @@ const { Router } = require('express')
 const router = Router({ mergeParams: true })
 const { CustomError } = require("../errors/CustomError")
 const subjectServices = require("../services/SubjectService")
+const classRoomStudentServices = require("../services/ClassRoomStudentService")
+const classRoomServices=require("../services/ClassRoomServices")
 const { default: mongoose } = require('mongoose')
 const { createSubjectDTO, deleteSubjectDTO, updateSubjectDTO } = require('../dtos/SubjectDTO')
+const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 router
     .get("/", async (req, res) => {
         try {
@@ -14,7 +17,7 @@ router
             res.status(500).json(error)
         }
     })
-    .post("/", async (req, res) => {
+    .post("/",verifyToken, authorize([ "admin"]), async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -31,39 +34,55 @@ router
             if (error instanceof CustomError)
                 res.status(error.code).json({ message: error.message })
             else
-                res.status(500).json("Server has something wrong!!") 
+            res.status(500).json({ message: error.message }) 
             console.error(error.toString())
         }
     })
-    .delete("/:id",async(req,res)=>{
-        const session=await mongoose.startSession()
+    .delete("/:id",verifyToken, authorize([ "admin"]), async (req, res) => {
+        const session = await mongoose.startSession()
         session.startTransaction()
-        try{
-            const subjectDTO=deleteSubjectDTO(req.params.id)
-            if(subjectDTO.hasOwnProperty("errMessage"))
-                throw new CustomError(subjectDTO.errMessage,400)
-            await subjectServices.deleteOne(subjectDTO.data.id,session)
+        try {
+            // const check=classRoomServices.getBySubjectId(req.params.id)
+            // if(check.length>0)
+            // {
+            //     // throw new CustomError("Không xóa được vì có tồn tại trong classroom", 400)
+            //     await classRoomServices.deleteOne(subjectDTO.data.id,session)
+            // }
+            const classrooms = await classRoomServices.getBySubjectId(req.params.id);
+            console.log(classrooms)
+            for(const classroom of classrooms){
+                const classroomstudent=await classRoomStudentServices.getByClassRoomId(classroom._id)
+                for(const student of classroomstudent){
+                    await classRoomStudentServices.deleteOne(student._id)
+                }
+                await classRoomServices.deleteOne(classroom._id,session);
+            }
+            const subjectDTO = deleteSubjectDTO(req.params.id)
+            if (subjectDTO.hasOwnProperty("errMessage"))
+                throw new CustomError(subjectDTO.errMessage, 400)
+            await subjectServices.deleteOne(subjectDTO.data.id, session)
             await session.commitTransaction()
-            res.status(201).json({message:"xóa thành công"})
+            res.status(201).json({ message: "xóa thành công" })
         }
-        catch(error){
+        catch (error) {
             await session.abortTransaction()
             session.endSession()
-            if(error instanceof CustomError)
-                res.status(error.code).json({message:error.message})
+            if (error instanceof CustomError)
+                res.status(error.code).json({ message: error.message })
             else
-                res.status(500).json({message:"Server has something wrong!!"})
+                res.status(500).json({ message: error.message })
+
             console.log(error.toString)
         }
     })
-    .put("/:id",async(req,res)=>{
-        const session=await mongoose.startSession()
+    .put("/:id",verifyToken, authorize(["admin"]), async (req, res) => {
+        const session = await mongoose.startSession()
         session.startTransaction()
         try {
-            const subjectDTO= updateSubjectDTO(req.params.id,req.body)
-            if(subjectDTO.hasOwnProperty("errMessage"))
-                throw new CustomError(subjectDTO.errMessage,400)
-            const updateSubject=await subjectServices.updateOne(subjectDTO.data,session)
+            const subjectDTO = updateSubjectDTO(req.params.id, req.body)
+            if (subjectDTO.hasOwnProperty("errMessage"))
+                throw new CustomError(subjectDTO.errMessage, 400)
+            const updateSubject = await subjectServices.updateOne(subjectDTO.data, session)
             await session.commitTransaction()
             res.status(201).json(updateSubject)
         } catch (error) {
@@ -73,7 +92,7 @@ router
             if (error instanceof CustomError)
                 res.status(error.code).json({ message: error.message })
             else
-                res.status(500).json("Server has something wrong!!")
+            res.status(500).json({ message: error.message }) 
             console.error(error.toString())
         }
     })

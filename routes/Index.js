@@ -11,6 +11,7 @@ const { router: GroupRouter } = require("./GroupRouter");
 const { router: subjectRouter} = require("./SubjectRoute");
 const { router: RequestRouter } = require("./RequestRoute");
 const { router: DiscussRouter } = require("./DiscussRoute");
+const { router: ClassRoomStudentRouter } = require("./ClassRoomStudentRoute");
 
 router.use("/account", accountRouter);
 router.use("/notification", notificationRouter);
@@ -22,4 +23,5 @@ router.use("/group", GroupRouter);
 router.use("/subject",subjectRouter);
 router.use("/request", RequestRouter);
 router.use("/discuss", DiscussRouter);
+router.use("/classroom-student", ClassRoomStudentRouter);
 module.exports = router;

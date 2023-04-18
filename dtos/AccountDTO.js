@@ -9,7 +9,7 @@ function loginAccountDto(reqBody) {
   const errMessages = [];
 
   if (validateString(input.email))
-    errMessages.push("trường 'username' chưa hợp lệ");
+    errMessages.push("trường 'email' chưa hợp lệ");
   if (validateString(input.password))
     errMessages.push("trường 'password' chưa hợp lệ");
 

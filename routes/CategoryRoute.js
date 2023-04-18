@@ -11,12 +11,12 @@ router
         session.startTransaction()
         try {
             let img = ""
-            if(req.file !== null && req.file !== undefined)
+            if (req.file !== null && req.file !== undefined)
                 img = req.file.filename
-            const categoryDTO = createCategoryDto({...req.body, img})
+            const categoryDTO = createCategoryDto({ ...req.body, img })
             if (categoryDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(categoryDTO.errMessage, 400)
-            const createdCategory = await categoryService.create({...categoryDTO.data}, session)
+            const createdCategory = await categoryService.create({ ...categoryDTO.data }, session)
 
             await session.commitTransaction()
             res.status(201).json(createdCategory[0])
@@ -28,7 +28,7 @@ router
             if (error instanceof CustomError)
                 res.status(error.code).json({ message: error.message })
             else
-                res.status(500).json("Server has something wrong!!") 
+                res.status(500).json("Server has something wrong!!")
             console.error(error.toString())
         }
 
@@ -38,12 +38,12 @@ router
         session.startTransaction()
         try {
             let img = ""
-            if(req.file !== null && req.file !== undefined)
+            if (req.file !== null && req.file !== undefined)
                 img = req.file.filename
-            const categoryDTO = updateCategoryDto(req.params.id,{...req.body, img})
+            const categoryDTO = updateCategoryDto(req.params.id, { ...req.body, img })
             if (categoryDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(categoryDTO.errMessage, 400)
-            const updatedCategory = await categoryService.update({...categoryDTO.data}, session)
+            const updatedCategory = await categoryService.update({ ...categoryDTO.data }, session)
             await session.commitTransaction()
             res.status(201).json(updatedCategory)
 
@@ -67,7 +67,7 @@ router
             res.status(500).json(error)
         }
     })
-    .delete("/:id",async (req,res) => {
+    .delete("/:id", async (req, res) => {
         const session = await mongoose.startSession()
         session.startTransaction()
         try {
@@ -76,7 +76,7 @@ router
                 throw new CustomError(categoryDTO.errMessage, 400)
             await categoryService.deleteOne(categoryDTO.data.id, session)
             await session.commitTransaction()
-            res.status(201).json({message: "xoa thanh cong"})
+            res.status(201).json({ message: "xoa thanh cong" })
         } catch (error) {
             await session.abortTransaction()
             session.endSession()
@@ -84,7 +84,8 @@ router
             if (error instanceof CustomError)
                 res.status(error.code).json({ message: error.message })
             else
-                res.status(500).json({message:"Server has something wrong!!"})
+                res.status(500).json({ message: error.message })
+
             console.error(error.toString())
         }
     })

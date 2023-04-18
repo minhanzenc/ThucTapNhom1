@@ -1,11 +1,11 @@
 const student = require("../models/StudentModel");
 
 const create = (
-  { lastName, firstName, classRoom, phone, email, r_account },
+  { lastName, firstName,idStudent, classRoom, phone, email, r_account },
   session
 ) => {
   return student.create(
-    [{ lastName, firstName, classRoom, phone, email, r_account }],
+    [{ lastName, firstName, idStudent,classRoom, phone, email, r_account }],
     { session }
   );
 };
@@ -31,13 +31,13 @@ const getOneById = (id) => {
   return student.findById({ _id: id, active: true });
 };
 const updateOne = (
-  { id, lastName, firstName, phone, classRoom, email },
+  { id, lastName, firstName,idStudent, phone, classRoom, email },
   session
 ) => {
   return student
     .findOneAndUpdate(
       { _id: id },
-      { lastName, firstName, phone, classRoom, email },
+      { lastName,idStudent, firstName, phone, classRoom, email },
       { new: true }
     )
     .session(session);

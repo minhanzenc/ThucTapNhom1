@@ -9,7 +9,8 @@ const readFile = (data) => {
     }))[0].data.map(e => {
         return {
             firstName: e.Ho_lot,
-            lastName: e.Ten,
+            lastName:  e.Ten,
+            idStudent: e.MSSV,
             phone: e.DT_lien_lac,
             email: e.Email,
             classRoom: e.Ma_lop,

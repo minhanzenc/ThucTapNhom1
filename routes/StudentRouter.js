@@ -56,23 +56,24 @@ router
         session
       );
       await session.commitTransaction();
-      // let transporter = nodemailer.createTransport({
-      //     host: "smtp.gmail.com",
-      //     port: 587,
-      //     secure: false, // true for 465, false for other ports
-      //     auth: {
-      //         user: 'minhanzenc@gmail.com', // generated ethereal user
-      //         pass: 'eznlnrubumhqewrb'
-      //     },
-      // });
+      let transporter = nodemailer.createTransport({
+          host: "smtp.gmail.com",
+          port: 587,
+          secure: false, // true for 465, false for other ports
+          auth: {
+              user: 'minhanzenc@gmail.com', // generated ethereal user
+              pass: 'vngwetijvqacllke'
+          },
+          //eznlnrubumhqewrb
+      });
 
-      // // send mail with defined transport object
-      //     await transporter.sendMail({
-      //         from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
-      //         to: createdAccount[0].email, // list of receivers0
-      //         subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
-      //         html: `<h1>mat khau cua ban la: ${createdAccount[0].password}</h1>`, // html body
-      //     });
+      // send mail with defined transport object
+          await transporter.sendMail({
+              from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+              to: createdAccount[0].email, // list of receivers0
+              subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
+              html: `<h1>mat khau cua ban la: ${createdAccount[0].password}</h1>`, // html body
+          });
 
       res.status(201).json(createdStudent);
     } catch (error) {
@@ -81,7 +82,7 @@ router
 
       if (error instanceof CustomError)
         res.status(error.code).json({ message: error.message });
-      else res.status(500).json("Server has something wrong!!");
+      else res.status(500).json({ message: error.message }) ;
       console.error(error.toString());
     }
   })
@@ -122,25 +123,25 @@ router
 
         await session.commitTransaction();
 
-        // let transporter = nodemailer.createTransport({
-        //     host: "smtp.gmail.com",
-        //     port: 587,
-        //     secure: false, // true for 465, false for other ports
-        //     auth: {
-        //         user: 'minhanzenc@gmail.com', // generated ethereal user
-        //         pass: 'eznlnrubumhqewrb'
-        //     },
-        // });
+        let transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: 'minhanzenc@gmail.com', // generated ethereal user
+                pass: 'vngwetijvqacllke'
+            },
+        });
 
-        // // send mail with defined transport object
-        // for (const account of createdAccounts) {
-        //     await transporter.sendMail({
-        //         from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
-        //         to: account.email, // list of receivers0
-        //         subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
-        //         html: `<h1>mat khau cua ban la: ${account.password}</h1>`, // html body
-        //     });
-        // }
+        // send mail with defined transport object
+        for (const account of createdAccounts) {
+            await transporter.sendMail({
+                from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+                to: account.email, // list of receivers0
+                subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
+                html: `<h1>mat khau cua ban la: ${account.password}</h1>`, // html body
+            });
+        }
         res.status(201).json(createdStudent);
       } catch (error) {
         await session.abortTransaction();
@@ -148,7 +149,7 @@ router
 
         if (error instanceof CustomError)
           res.status(error.code).json({ message: error.message });
-        else res.status(500).json("Server has something wrong!!");
+        else res.status(500).json({ message: error.message }) 
         console.error(error.toString());
       }
     }
@@ -173,7 +174,7 @@ router
 
         if (error instanceof CustomError)
           res.status(error.code).json({ message: error.message });
-        else res.status(500).json({ message: "Server has something wrong!!" });
+        else res.status(500).json({ message: error.message }) 
         console.error(error.toString());
       }
     }
@@ -201,7 +202,7 @@ router
 
         if (error instanceof CustomError)
           res.status(error.code).json({ message: error.message });
-        else res.status(500).json("Server has something wrong!!");
+        else res.status(500).json({ message: error.message }) 
         console.error(error.toString());
       }
     }

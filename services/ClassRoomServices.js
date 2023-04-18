@@ -6,8 +6,8 @@ function create(classRoomDTO, session) {
 function deleteOne(id, session) {
   return classRoomRepo.deleteOne(id, session);
 }
-function getAll() {
-  return classRoomRepo.getAll();
+function getAll(teacherId) {
+  return classRoomRepo.getAll(teacherId);
 }
 function update(classRoomDTO, session) {
   return classRoomRepo.updateOne(classRoomDTO, session);
@@ -15,4 +15,7 @@ function update(classRoomDTO, session) {
 function getByTeacherId(teacherId){
   return classRoomRepo.getByTeacherId(teacherId)
 }
-module.exports = { create, deleteOne, getAll, update,getByTeacherId };
+function getBySubjectId(subjectId){
+  return classRoomRepo.getBySubjectId(subjectId)
+}
+module.exports = { create, deleteOne, getAll, update,getByTeacherId ,getBySubjectId};
