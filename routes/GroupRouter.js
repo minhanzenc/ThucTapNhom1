@@ -66,7 +66,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
 
 //THEM SINH VIEN VAO NHOM
 //TRUYEN MA SINH VIEN VAO
-router.post("/students/:groupId", async (req, res) => {
+router.post("/students/:groupId", verifyToken, async (req, res) => {
   try {
     const groupId = req.params.groupId;
     console.log("student id ", req.body.r_student);

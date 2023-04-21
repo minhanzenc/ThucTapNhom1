@@ -1,10 +1,11 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"].split(" ")[1];
+  const token = req.headers["x-access-token"];
   if (!token) return res.status(403).json({ message: "chưa truyền token" });
   try {
     const decoded = jwt.verify(token, "QuocBinh");
+    console.log("token", decoded);
     if (!decoded.id)
       return res
         .status(401)
