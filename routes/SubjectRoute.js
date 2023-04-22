@@ -12,7 +12,7 @@ const {
 } = require("../dtos/SubjectDTO");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 router
-  .get("/", verifyToken, authorize(["admin"]), async (req, res) => {
+  .get("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
     try {
       const { query } = req;
       const subject = await subjectServices.getAll(query);
