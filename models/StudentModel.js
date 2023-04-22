@@ -9,10 +9,10 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: 'trường "lastName" phải được truyền vào',
   },
-  idStudent:{
-    type:String,
-    require :'trường "ID Student" phải được truyền vào',
-    unique: "Mã SV không được trùng",
+  idStudent: {
+    type: String,
+    required: 'trường "ID Student" phải được truyền vào',
+    unique: true,
   },
   classRoom: {
     type: String,
@@ -21,7 +21,7 @@ const studentSchema = new mongoose.Schema({
   phone: {
     type: String,
     required: 'trường "phone" phải được truyền vào',
-    unique: 'Số điện thoại đã bị trùng vui lòng thử lại ',
+    unique: true,
   },
   email: {
     type: String,
