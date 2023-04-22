@@ -6,6 +6,8 @@ function createStudentDTO(input) {
         errMessages.push("trường 'lastname' chưa hợp lệ")
     if (validateString(input.firstName))
         errMessages.push("trường 'firstname' chưa hợp lệ")
+        if(validateString(input.idStudent))
+        errMessages.push("trường 'ID Student' chưa hợp lệ")
     if (validateString(input.classRoom))
         errMessages.push("trường 'class' chưa hợp lệ")
     if (validatePhone(input.phone))
@@ -15,7 +17,7 @@ function createStudentDTO(input) {
 
     if (errMessages.length > 0)
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err} ---`, "") }
-    return { data: { lastName: input.lastName, firstName: input.firstName, classRoom: input.classRoom, phone: input.phone, email: input.email } }
+    return { data: { lastName: input.lastName, firstName: input.firstName, idStudent:input.idStudent, classRoom: input.classRoom, phone: input.phone, email: input.email } }
 }
 function deleteStudentDTO(id) {
     const errMessages = []
@@ -39,6 +41,8 @@ function updateStudentDTO(id, reqBody) {
         errMessages.push("trường 'firstName' chưa hợp lệ")
     if (validateObjectId(id))
         errMessages.push("Id không hợp lệ")
+    if(validateString(input.idStudent))
+        errMessages.push("trường 'ID Student' chưa hợp lệ")
     if (validatePhone(input.phone))
         errMessages.push("trường 'phone' chưa hợp lệ")
     if (validateString(input.classRoom))
@@ -48,7 +52,7 @@ function updateStudentDTO(id, reqBody) {
     if (errMessages.length > 0)
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
 
-    const data = { id, lastName: input.lastName, firstName: input.firstName, phone: input.phone,classRoom:input.classRoom, email: input.email }
+    const data = { id, lastName: input.lastName, firstName: input.firstName, idStudent:input.idStudent, phone: input.phone,classRoom:input.classRoom, email: input.email }
     return { data }
 }
 module.exports = { createStudentDTO, deleteStudentDTO, updateStudentDTO }

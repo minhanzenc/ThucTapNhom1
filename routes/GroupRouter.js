@@ -8,6 +8,7 @@ const GroupStudent = require("../models/GroupStudentModel");
 const ClassRoom = require("../models/ClassRoomModel");
 const CustomError = require("../errors/CustomError");
 const Request = require("../models/RequestModel");
+const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 
 const GroupService = require("../services/GroupService");
@@ -45,6 +46,39 @@ router.post("/", verifyToken, async (req, res) => {
     res.status(500).send("Lỗi server");
   }
 });
+
+//them dieu kien min, max
+router.post("/conditionToCreateGroup", verifyToken, async (req, res) => {
+  const { max, min, r_classroom } = req.body;
+
+  try {
+    // Kiểm tra r_classroom có tồn tại trong SubjectModel không
+    const classroom = await ClassRoom.findById(r_classroom);
+    if (!classroom) {
+      return res.status(400).json({ message: "r_classroom không hợp lệ" });
+    }
+
+    const newCondition = new ConditionToCreateGroup({ min, max, r_classroom });
+    await newCondition.save();
+
+    res.json(newCondition);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Lỗi server");
+  }
+});
+
+//lay tat dieu kien cua group
+router.get("/conditionToCreateGroup/:r_classroom", async (req, res) => {
+  const { r_classroom } = req.params;
+  try {
+    const conditions = await ConditionToCreateGroup.find({ r_classroom });
+    res.json(conditions);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 //XOA GROUP TRUYEN ID VAO
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
@@ -73,6 +107,20 @@ router.post("/students/:groupId", verifyToken, async (req, res) => {
     const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ error: "Group not found" });
+    }
+    const condition = await ConditionToCreateGroup.find({
+      r_classroom: group.r_classroom,
+    });
+    console.log("condition max", condition[0].max);
+
+    const countGroupStudents = await GroupStudent.countDocuments({
+      r_group: group._id,
+    });
+    console.log("count ", countGroupStudents);
+    if (countGroupStudents >= condition[0].max) {
+      return res
+        .status(400)
+        .json({ error: "Group has reached maximum number of students" });
     }
     console.log("group id: ", group);
     const groupStudent = new GroupStudent({

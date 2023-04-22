@@ -15,7 +15,6 @@ function getOneById(id) {
 function update(studentDTO, session) {
   return studentRepo.updateOne(studentDTO, session);
 }
-
 function createMany(students, session) {
   return studentRepo.createMany(students, session);
 }

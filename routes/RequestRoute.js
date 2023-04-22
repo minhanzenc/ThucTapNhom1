@@ -142,7 +142,7 @@ router.put("/update-groupstudent/:id", async (req, res) => {
 });
 
 //chap nhan dang ky nhom nhom
-router.put("/update-groupstudent/:id", async (req, res) => {
+router.put("/update-SignUp-groupstudent/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const request = await Request.findById(id);
@@ -153,7 +153,7 @@ router.put("/update-groupstudent/:id", async (req, res) => {
     }
     const name = request.message;
     const groupStudent = await GroupStudent.findOne({
-      r_student: request.r_student.id,
+      r_student: request.r_student,
     });
     if (groupStudent) {
       return res.status(404).send({
@@ -161,14 +161,22 @@ router.put("/update-groupstudent/:id", async (req, res) => {
       });
     }
     // Cập nhật r_group của GroupStudentModel
-    request.status = true;
+    const r_classroom = request.r_classroom;
     const newGroup = new Group({ name, r_classroom });
     await newGroup.save();
-
+    const newgroupStudent = new GroupStudent({
+      r_group: newGroup._id,
+      r_student: request.r_student,
+      r_classroom: r_classroom,
+      role: "leader",
+    });
+    await newgroupStudent.save();
+    request.status = true;
     await request.save();
 
     res.send({
       message: "đăng ký nhóm thành công",
+      groupStudent: newgroupStudent,
     });
   } catch (error) {
     console.log(error);
