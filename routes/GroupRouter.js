@@ -12,6 +12,7 @@ const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 
 const GroupService = require("../services/GroupService");
+const { checkGroupMax } = require("../middlewares/checkGroupMax");
 
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
@@ -36,7 +37,12 @@ router.post("/", verifyToken, async (req, res) => {
     if (!classroom) {
       return res.status(400).json({ message: "r_classroom không hợp lệ" });
     }
-
+    const newCondition = new ConditionToCreateGroup({
+      min: 1,
+      max: 5,
+      r_classroom,
+    });
+    await newCondition.save();
     const newGroup = new Group({ name, r_classroom });
     await newGroup.save();
 
@@ -48,8 +54,8 @@ router.post("/", verifyToken, async (req, res) => {
 });
 
 //them dieu kien min, max
-router.post("/conditionToCreateGroup", verifyToken, async (req, res) => {
-  const { max, min, r_classroom } = req.body;
+router.put("/conditionToCreateGroup", verifyToken, async (req, res) => {
+  const { max, min = 1, r_classroom } = req.body;
 
   try {
     // Kiểm tra r_classroom có tồn tại trong SubjectModel không
@@ -58,7 +64,9 @@ router.post("/conditionToCreateGroup", verifyToken, async (req, res) => {
       return res.status(400).json({ message: "r_classroom không hợp lệ" });
     }
 
-    const newCondition = new ConditionToCreateGroup({ min, max, r_classroom });
+    const newCondition = new ConditionToCreateGroup.findOne({ r_classroom });
+    newCondition.min = min;
+    newCondition.max = max;
     await newCondition.save();
 
     res.json(newCondition);
@@ -68,7 +76,7 @@ router.post("/conditionToCreateGroup", verifyToken, async (req, res) => {
   }
 });
 
-//lay tat dieu kien cua group
+//lay  dieu kien min max cua group
 router.get("/conditionToCreateGroup/:r_classroom", async (req, res) => {
   const { r_classroom } = req.params;
   try {
@@ -98,30 +106,30 @@ router.delete("/:id", verifyToken, async (req, res) => {
   }
 });
 
-//THEM SINH VIEN VAO NHOM
+//THEM tung SINH VIEN VAO NHOM
 //TRUYEN MA SINH VIEN VAO
-router.post("/students/:groupId", verifyToken, async (req, res) => {
+router.post("/students/", checkGroupMax, verifyToken, async (req, res) => {
   try {
-    const groupId = req.params.groupId;
-    console.log("student id ", req.body.r_student);
-    const group = await Group.findById(groupId);
+    const group = req.group;
+    // console.log("student id ", req.body.r_student);
+    // const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ error: "Group not found" });
     }
-    const condition = await ConditionToCreateGroup.find({
-      r_classroom: group.r_classroom,
-    });
-    console.log("condition max", condition[0].max);
+    // const condition = await ConditionToCreateGroup.find({
+    //   r_classroom: group.r_classroom,
+    // });
+    // console.log("condition max", condition[0].max);
 
-    const countGroupStudents = await GroupStudent.countDocuments({
-      r_group: group._id,
-    });
-    console.log("count ", countGroupStudents);
-    if (countGroupStudents >= condition[0].max) {
-      return res
-        .status(400)
-        .json({ error: "Group has reached maximum number of students" });
-    }
+    // const countGroupStudents = await GroupStudent.countDocuments({
+    //   r_group: group._id,
+    // });
+    // console.log("count ", countGroupStudents);
+    // if (countGroupStudents >= condition[0].max) {
+    //   return res
+    //     .status(400)
+    //     .json({ error: "Group has reached maximum number of students" });
+    // }
     console.log("group id: ", group);
     const groupStudent = new GroupStudent({
       r_group: group._id,
@@ -137,6 +145,46 @@ router.post("/students/:groupId", verifyToken, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(500).send(err.message);
+  }
+});
+
+//them hang loat sinh vien vao nhom
+// [
+//   {
+//     "role": "LEADER",
+//     "r_group": "604f6ebd7f6751a741508c3a",
+//     "r_student": "604f6ebd7f6751a741508c3b",
+//     "r_classroom": "604f6ebd7f6751a741508c3c"
+//   },
+//   {
+//     "role": "MEMBER",
+//     "r_group": "604f6ebd7f6751a741508c3a",
+//     "r_student": "604f6ebd7f6751a741508c3d",
+//     "r_classroom": "604f6ebd7f6751a741508c3c"
+//   }
+// ]
+router.post("/multipleInsertStudent", async (req, res) => {
+  const data = req.body;
+
+  try {
+    const condition = await ConditionToCreateGroup.findOne({
+      r_classroom: data[0].r_classroom,
+    });
+    const count = await GroupStudent.countDocuments({
+      r_group: data[0].r_group,
+    });
+
+    if (count + data.length > condition.max) {
+      res
+        .status(400)
+        .send(`Số lượng bản ghi vượt quá giới hạn (${condition.max})`);
+      return;
+    }
+    const newRecords = await GroupStudent.insertMany(data);
+    res.json(newRecords);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Lỗi server");
   }
 });
 
@@ -157,6 +205,27 @@ router.get("/students/:groupId", async (req, res) => {
     res.status(200).send({ students, group });
   } catch (error) {
     res.status(500).send(error);
+  }
+});
+
+//lay tat ca nhom va sinh vien co trong nhom
+router.get("/groups-with-students", async (req, res) => {
+  try {
+    const groups = await Group.find();
+    const students = await GroupStudent.find().populate("r_student");
+
+    const groupStudentList = groups.map((group) => {
+      const studentsInGroup = students.filter(
+        (student) => student.r_group == group.id
+      );
+
+      return { group, students: studentsInGroup };
+    });
+
+    res.json(groupStudentList);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server Error");
   }
 });
 //Xoa studen khỏi nhom
