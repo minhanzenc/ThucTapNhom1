@@ -17,6 +17,10 @@ const requestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "group",
   },
+  r_classroom: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "classroom",
+  },
   status: {
     type: Boolean,
     required: 'trường "status" phải được truyền vào',

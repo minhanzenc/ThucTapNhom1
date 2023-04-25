@@ -130,4 +130,70 @@ router.delete("/delete/:id", verifyToken, async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+//gửi thông bao đến nhóm
+
+router.post("/group", async (req, res) => {
+  try {
+    const { title, message, r_teacher, r_group } = req.body;
+
+    const newNotification = new Notification({
+      title,
+      message,
+      r_teacher,
+      r_group,
+    });
+
+    await newNotification.save();
+
+    res.status(201).json(newNotification);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to add notification" });
+  }
+});
+router.post("/classroom", async (req, res) => {
+  try {
+    const { title, message, r_teacher, r_classroom } = req.body;
+
+    const newNotification = new Notification({
+      title,
+      message,
+      r_teacher,
+      r_classroom,
+    });
+
+    await newNotification.save();
+
+    res.status(201).json(newNotification);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to add notification" });
+  }
+});
+router.get("/group/:r_group", async (req, res) => {
+  try {
+    const { r_group } = req.params;
+    const notification = await Notification.find({ r_group })
+      .populate("r_student", "firstName lastName")
+      .populate("r_teacher", "firstName lastName")
+      .exec();
+    res.status(200).json(notification);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
+router.get("/classroom/:r_classroom", async (req, res) => {
+  try {
+    const { r_classroom } = req.params;
+    const notification = await Notification.find({ r_classroom })
+      .populate("r_student", "firstName lastName")
+      .populate("r_teacher", "firstName lastName")
+      .exec();
+    res.status(200).json(notification);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
+
 module.exports = { router };

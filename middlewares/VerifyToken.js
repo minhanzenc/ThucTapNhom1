@@ -5,6 +5,7 @@ const verifyToken = (req, res, next) => {
   if (!token) return res.status(403).json({ message: "chưa truyền token" });
   try {
     const decoded = jwt.verify(token, "QuocBinh");
+    console.log("token", decoded);
     if (!decoded.id)
       return res
         .status(401)
