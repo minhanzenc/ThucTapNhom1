@@ -48,7 +48,7 @@ const updateOne = ({ id, name, period, r_teacher, r_subject }, session) => {
     .session(session);
 };
 const getOneById = (id) => {
-  return classRoom.findById({ _id: id, active: true });
+  return classRoom.findById({ _id: id, active: true }).lean();
 };
 module.exports = {
   create,

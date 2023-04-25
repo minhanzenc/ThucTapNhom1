@@ -37,9 +37,9 @@ router.post("/change-password", verifyToken, async (req, res) => {
     }
 
     // Cập nhật mật khẩu mới
-    const salt = await bcrypt.genSaltSync(10);
-    const hashedPassword = await bcrypt.hashSync(newPassword, salt);
-    account.password = hashedPassword;
+    // const salt = await bcrypt.genSaltSync(10);
+    // const hashedPassword = await bcrypt.hashSync(newPassword, salt);
+    account.password = newPassword;
     await account.save();
 
     return res.status(200).json({ message: "Mật khẩu đã được cập nhật." });
@@ -48,6 +48,5 @@ router.post("/change-password", verifyToken, async (req, res) => {
     return res.status(500).json({ message: "Lỗi server, vui lòng thử lại." });
   }
 });
-
 
 module.exports = { router };
