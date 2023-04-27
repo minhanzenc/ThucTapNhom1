@@ -32,7 +32,6 @@ function validateArray(input) {
     return true
   return false
 }
-
 function validateEnum(Enum, input) {
   return !Object.values(Enum).includes(input)
 
@@ -68,17 +67,6 @@ function validatePhone(input) {
   return false
 }
 
-function validateDate(input) {
-  if (
-    typeof input !== "string" ||
-    input === null ||
-    input === undefined ||
-    isValidDate(input)
-  )
-    return true
-  return false
-}
-
 function validateObjectId(input) {
   if (
     ObjectId.isValid(input)
@@ -99,5 +87,5 @@ function validateObject(input) {
 }
 
 
-module.exports = {validateObject, validateObjectId, validateArray, validateNumber, validateString, validateEnum, validateEmail, validatePhone, validateDate }
+module.exports = {validateObject, validateObjectId, validateNumber, validateString, validateEnum, validateEmail, validatePhone,validateArray}
 

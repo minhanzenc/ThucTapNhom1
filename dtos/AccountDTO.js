@@ -1,7 +1,5 @@
 const {
   validateString,
-  validateEmail,
-  validateEnum,
   validateObjectId,
 } = require("../validation/validation");
 function loginAccountDto(reqBody) {
@@ -24,5 +22,16 @@ function loginAccountDto(reqBody) {
     },
   };
 }
+function deleteAccountDTO(id) {
+  const errMessages = []
 
-module.exports = { loginAccountDto };
+  if (validateObjectId(id))
+      errMessages.push("Id không hợp lệ")
+
+  if (errMessages.length > 0)
+      return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
+
+  return { data: { id } }
+
+}
+module.exports = { loginAccountDto,deleteAccountDTO };

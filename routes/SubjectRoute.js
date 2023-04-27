@@ -4,6 +4,7 @@ const { CustomError } = require("../errors/CustomError");
 const subjectServices = require("../services/SubjectService");
 const classRoomStudentServices = require("../services/ClassRoomStudentService");
 const classRoomServices = require("../services/ClassRoomServices");
+const accountServices = require("../services/ClassRoomServices");
 const { default: mongoose } = require("mongoose");
 const {
   createSubjectDTO,
@@ -63,6 +64,9 @@ router
       //     // throw new CustomError("Không xóa được vì có tồn tại trong classroom", 400)
       //     await classRoomServices.deleteOne(subjectDTO.data.id,session)
       // }
+      const subjectDTO = deleteSubjectDTO(req.params.id);
+      if (subjectDTO.hasOwnProperty("errMessage"))
+        throw new CustomError(subjectDTO.errMessage, 400);
       const classrooms = await classRoomServices.getBySubjectId(req.params.id);
       console.log(classrooms);
       for (const classroom of classrooms) {
@@ -73,9 +77,6 @@ router
         }
         await classRoomServices.deleteOne(classroom._id, session);
       }
-      const subjectDTO = deleteSubjectDTO(req.params.id);
-      if (subjectDTO.hasOwnProperty("errMessage"))
-        throw new CustomError(subjectDTO.errMessage, 400);
       await subjectServices.deleteOne(subjectDTO.data.id, session);
       await session.commitTransaction();
       res.status(201).json({ message: "xóa thành công" });

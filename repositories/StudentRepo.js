@@ -21,7 +21,6 @@ const getAll = async ({ page = 1, pageSize = 10 }) => {
     student.count({}),
     student.find({}).skip(take).limit(pageSize).sort({ _id: -1 }),
   ]);
-  console.log(countStudent, students);
   return {
     total: countStudent,
     students,
@@ -42,7 +41,9 @@ const updateOne = (
     )
     .session(session);
 };
-
+const getByAccountID=(accountID)=>{
+  return student.find({r_account:accountID})
+}
 module.exports = {
   create,
   deleteOne,
@@ -50,4 +51,5 @@ module.exports = {
   updateOne,
   createMany,
   getOneById,
+  getByAccountID,
 };

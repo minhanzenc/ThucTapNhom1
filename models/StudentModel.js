@@ -11,7 +11,7 @@ const studentSchema = new mongoose.Schema({
   },
   idStudent: {
     type: String,
-    required: 'trường "ID Student" phải được truyền vào',
+    require: 'trường "ID Student" phải được truyền vào',
     unique: true,
   },
   classRoom: {

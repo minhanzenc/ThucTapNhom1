@@ -31,7 +31,6 @@ const deleteOne = (id, session) => {
     { new: true }
   ).session(session);
 };
-
 const updateOne = ({ id, name, phone, email, address }, session) => {
   return Account.findOneAndUpdate(
     { _id: id },
