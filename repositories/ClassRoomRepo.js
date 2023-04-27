@@ -15,7 +15,7 @@ const getAll = async (teacherId, { page = 1, pageSize = 10 }) => {
   const take = (page - 1) * pageSize;
   console.log(teacherId);
   const [countClassroom, classRooms] = await Promise.all([
-    classRoom.count({}),
+    classRoom.count({r_teacher: teacherId}),
     classRoom
       .find({ r_teacher: teacherId })
       .skip(take)

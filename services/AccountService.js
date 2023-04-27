@@ -42,5 +42,7 @@ function create(account, session) {
 function createMany(accounts, session) {
   return accountRepo.createMany(accounts, session);
 }
-
-module.exports = { login, createMany, create };
+function deleteOne(id,session){
+  return accountRepo.deleteOne(id,session)
+}
+module.exports = { login, createMany, create, deleteOne};

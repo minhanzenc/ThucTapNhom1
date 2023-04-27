@@ -14,7 +14,6 @@ function createStudentDTO(input) {
         errMessages.push("trường 'phone' chưa hợp lệ")
     if (validateEmail(input.email))
         errMessages.push("trường 'email' chưa hợp lệ")
-
     if (errMessages.length > 0)
         return { errMessage: errMessages.reduce((total, err) => `${total} ${err} ---`, "") }
     return { data: { lastName: input.lastName, firstName: input.firstName, idStudent:input.idStudent, classRoom: input.classRoom, phone: input.phone, email: input.email } }

@@ -4,6 +4,9 @@ const classRoomStudent = require("../models/ClassRoomStudentModel")
 const createMany = (classRoomStudents, session) => {
     return classRoomStudent.insertMany(classRoomStudents, { session })
 }
+const create=({ role, r_classroom, r_student },session)=>{
+    return classRoomStudent.create([{ role, r_classroom, r_student }],{session})
+}
 // const getAll = (teacherId) => {
 //     return classRoomStudent.find({ active: true, r_teacher: teacherId})
 // }
@@ -16,4 +19,4 @@ const getByStudentId=(idStudent)=>{
 const deleteOne = (id,session) => {
     return classRoomStudent.findByIdAndDelete(id,{session})
 }
-module.exports = {getByClassRoomId, createMany ,getByStudentId,deleteOne}
+module.exports = {getByClassRoomId, createMany ,getByStudentId,deleteOne,create}

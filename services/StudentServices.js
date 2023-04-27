@@ -18,7 +18,9 @@ function update(studentDTO, session) {
 function createMany(students, session) {
   return studentRepo.createMany(students, session);
 }
-
+function getByAccountID(id){
+  return studentRepo.getByAccountID(id)
+}
 module.exports = {
   create,
   createMany,
@@ -26,4 +28,5 @@ module.exports = {
   getAll,
   update,
   getOneById,
+  getByAccountID
 };
