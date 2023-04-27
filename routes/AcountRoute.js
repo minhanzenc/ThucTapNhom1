@@ -32,7 +32,7 @@ router.post("/change-password", verifyToken, async (req, res) => {
     const account = await Account.findOne({ email, password });
     if (!account) {
       return res.status(404).json({
-        message: "Tài khoản email không tồn tại hoặc password không đúng.",
+        message: "Password hiện tại không đúng.",
       });
     }
 
