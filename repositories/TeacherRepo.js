@@ -9,10 +9,21 @@ const create = ({ lastName, firstName, phone, email, r_account }, session) => {
 const deleteOne = (id, session) => {
   return teacher.findByIdAndDelete(id, { session });
 };
-const getAll = () => {
-  return teacher.find({});
+const getAll = async ({ page = 1, pageSize = 10 }) => {
+  const take = (page - 1) * pageSize;
+  const [countTeacher, teachers] = await Promise.all([
+    teacher.count({}),
+    teacher.find({}).skip(take).limit(pageSize).sort({ _id: -1 }),
+  ]);
+  console.log(countTeacher, teachers);
+  return {
+    total: countTeacher,
+    teachers,
+  };
 };
-
+const getOneById = (id) => {
+  return teacher.findById({ _id: id, active: true });
+};
 const updateOne = ({ id, lastName, firstName, phone, email }, session) => {
   return teacher
     .findOneAndUpdate(
@@ -23,4 +34,4 @@ const updateOne = ({ id, lastName, firstName, phone, email }, session) => {
     .session(session);
 };
 
-module.exports = { create, deleteOne, getAll, updateOne };
+module.exports = { getOneById, create, deleteOne, getAll, updateOne };

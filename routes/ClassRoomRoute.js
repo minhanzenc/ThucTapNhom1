@@ -32,11 +32,25 @@ router
             res.status(500).json(error);
         }
     })
-    .post("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
-        const session = await mongoose.startSession();
-        session.startTransaction();
-        try {
-            const classRoomDTO = createClassRoomDTO(req.body);
+  .get(
+    "/:id",
+    verifyToken,
+    authorize(["teacher", "admin"]),
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const classRoom = await classRoomServices.getOneById(id);
+        return res.status(200).json(classRoom);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    }
+  )
+  .post("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const classRoomDTO = createClassRoomDTO(req.body);
 
             if (classRoomDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(classRoomDTO.errMessage, 400);

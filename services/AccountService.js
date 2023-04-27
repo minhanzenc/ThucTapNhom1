@@ -19,6 +19,7 @@ async function login(userDTO) {
       throw new CustomError("mật khẩu không trùng khớp", 400);
     const signedToken = signToken(foundUser);
     let ChildId;
+    console.log("loginuser", foundUser);
     if (foundUser.role == "teacher") {
       ChildId = await Teacher.find({ r_account: foundUser.id });
     } else {
