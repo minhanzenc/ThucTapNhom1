@@ -11,7 +11,7 @@ const Request = require("../models/RequestModel");
 const GroupService = require("../services/GroupService");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 // gửi request xin chuyen nhom cho giao vien
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, authorize(["student"]), async (req, res) => {
   try {
     const groupId = req.body.recipient_group;
     console.log("student id ", req.body.r_student);
@@ -40,29 +40,34 @@ router.post("/", async (req, res) => {
   }
 });
 //gui request dang ky nhom
-router.post("/students", async (req, res) => {
-  try {
-    const request = new Request({
-      message: req.body.message,
-      r_student: req.body.r_student,
-      r_teacher: req.body.r_teacher,
-      r_classroom: req.body.r_classroom,
-      status: false, // false la yeu cau doi nhom chua dc chap thuan
-    });
-    await request.save();
+router.post(
+  "/students",
+  verifyToken,
+  authorize(["student"]),
+  async (req, res) => {
+    try {
+      const request = new Request({
+        message: req.body.message,
+        r_student: req.body.r_student,
+        r_teacher: req.body.r_teacher,
+        r_classroom: req.body.r_classroom,
+        status: false, // false la yeu cau doi nhom chua dc chap thuan
+      });
+      await request.save();
 
-    res.status(201).json({
-      message: "Request created successfully",
-      CreateRequest: request,
-    });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send(err.message);
+      res.status(201).json({
+        message: "Request created successfully",
+        CreateRequest: request,
+      });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send(err.message);
+    }
   }
-});
+);
 
 //lay tat cac request gui den giao vien
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, authorize(["teacher"]), async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -91,7 +96,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //giao vien xoa request
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, authorize(["teacher"]), async (req, res) => {
   const { id } = req.params;
   try {
     const deletedRequest = await Request.findByIdAndDelete(id);
@@ -105,84 +110,94 @@ router.delete("/:id", async (req, res) => {
 });
 
 //chap nhan chuyen nhom
-router.put("/update-groupstudent/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const request = await Request.findById(id);
-    if (!request) {
-      return res.status(404).send({
-        message: "Không tìm thấy request",
+router.put(
+  "/update-groupstudent/:id",
+  verifyToken,
+  authorize(["teacher"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const request = await Request.findById(id);
+      if (!request) {
+        return res.status(404).send({
+          message: "Không tìm thấy request",
+        });
+      }
+      const groupStudent = await GroupStudent.findOne({
+        r_group: request.r_group,
+        r_student: request.r_student,
       });
-    }
-    const groupStudent = await GroupStudent.findOne({
-      r_group: request.r_group,
-      r_student: request.r_student,
-    });
-    if (!groupStudent) {
-      return res.status(404).send({
-        message:
-          "Không tìm thấy GroupStudentModel với r_group và r_student được cung cấp",
-      });
-    }
-    // Cập nhật r_group của GroupStudentModel
-    request.status = true;
-    groupStudent.r_group = request.recipient_group;
-    await groupStudent.save();
-    await request.save();
+      if (!groupStudent) {
+        return res.status(404).send({
+          message:
+            "Không tìm thấy GroupStudentModel với r_group và r_student được cung cấp",
+        });
+      }
+      // Cập nhật r_group của GroupStudentModel
+      request.status = true;
+      groupStudent.r_group = request.recipient_group;
+      await groupStudent.save();
+      await request.save();
 
-    res.send({
-      message: "Cập nhật thành công r_group của GroupStudentModel",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      message: "Lỗi trong quá trình cập nhật r_group của GroupStudentModel",
-    });
+      res.send({
+        message: "Cập nhật thành công r_group của GroupStudentModel",
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: "Lỗi trong quá trình cập nhật r_group của GroupStudentModel",
+      });
+    }
   }
-});
+);
 
 //chap nhan dang ky nhom nhom
-router.put("/update-SignUp-groupstudent/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const request = await Request.findById(id);
-    if (!request) {
-      return res.status(404).send({
-        message: "Không tìm thấy request",
+router.put(
+  "/update-SignUp-groupstudent/:id",
+  verifyToken,
+  authorize(["teacher"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const request = await Request.findById(id);
+      if (!request) {
+        return res.status(404).send({
+          message: "Không tìm thấy request",
+        });
+      }
+      const name = request.message;
+      const groupStudent = await GroupStudent.findOne({
+        r_student: request.r_student,
       });
-    }
-    const name = request.message;
-    const groupStudent = await GroupStudent.findOne({
-      r_student: request.r_student,
-    });
-    if (groupStudent) {
-      return res.status(404).send({
-        message: "sinh vien nay da co nhom",
+      if (groupStudent) {
+        return res.status(404).send({
+          message: "sinh vien nay da co nhom",
+        });
+      }
+      // Cập nhật r_group của GroupStudentModel
+      const r_classroom = request.r_classroom;
+      const newGroup = new Group({ name, r_classroom });
+      await newGroup.save();
+      const newgroupStudent = new GroupStudent({
+        r_group: newGroup._id,
+        r_student: request.r_student,
+        r_classroom: r_classroom,
+        role: "leader",
       });
-    }
-    // Cập nhật r_group của GroupStudentModel
-    const r_classroom = request.r_classroom;
-    const newGroup = new Group({ name, r_classroom });
-    await newGroup.save();
-    const newgroupStudent = new GroupStudent({
-      r_group: newGroup._id,
-      r_student: request.r_student,
-      r_classroom: r_classroom,
-      role: "leader",
-    });
-    await newgroupStudent.save();
-    request.status = true;
-    await request.save();
+      await newgroupStudent.save();
+      request.status = true;
+      await request.save();
 
-    res.send({
-      message: "đăng ký nhóm thành công",
-      groupStudent: newgroupStudent,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      message: "Lỗi trong quá trình cập nhật r_group của GroupStudentModel",
-    });
+      res.send({
+        message: "đăng ký nhóm thành công",
+        groupStudent: newgroupStudent,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        message: "Lỗi trong quá trình cập nhật r_group của GroupStudentModel",
+      });
+    }
   }
-});
+);
 module.exports = { router };
