@@ -30,6 +30,14 @@ router.get("/classroom/:r_classroom", verifyToken, async (req, res) => {
 // TAO GROUP .TRUYEN TEN NHOM VOI R_classroom
 router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
   const { name, r_classroom } = req.body;
+  const { user } = req;
+  const teacherID = await Teacher.findOne({ r_account: user.id });
+  console.log("teacher ", teacherID.id);
+  if (!teacherID) {
+    return res
+      .status(404)
+      .json({ error: "teacher chua co thong tin chi tiet trong he thong" });
+  }
 
   try {
     // Kiểm tra r_classroom có tồn tại trong SubjectModel không
@@ -43,13 +51,13 @@ router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
       r_classroom,
     });
     await newCondition.save();
-    const newGroup = new Group({ name, r_classroom });
+    const newGroup = new Group({ name, r_classroom, r_teacher: teacherID.id });
     await newGroup.save();
 
     res.json(newGroup);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Lỗi server");
+    res.status(500).send("da ton tai Lỗi server");
   }
 });
 

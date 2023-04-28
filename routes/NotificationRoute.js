@@ -100,14 +100,7 @@ router.get(
   authorize(["student", "teacher"]),
   async (req, res) => {
     try {
-      const { user } = req;
-      const studentID = Student.findOne({ r_account: user.id });
-      if (studentID) {
-        return res
-          .status(404)
-          .json({ error: "student chua co thong tin chi tiet trong he thong" });
-      }
-      const notificationDTO = getNotificationDTO(studentID);
+      const notificationDTO = getNotificationDTO(req.params);
       if (notificationDTO.hasOwnProperty("errMessage"))
         throw new CustomError(notificationDTO.errMessage, 400);
       const notifications = await NotificationService.getNotification(
@@ -127,14 +120,14 @@ router.get(
   authorize(["teacher"]),
   async (req, res) => {
     try {
-      const { user } = req;
-      const teacherID = Teacher.findOne({ r_account: user.id });
-      if (teacherID) {
-        return res
-          .status(404)
-          .json({ error: "teacher chua co thong tin chi tiet trong he thong" });
-      }
-      const notificationDTO = getNotificationDTO(teacherID);
+      // const { user } = req;
+      // const teacherID = Teacher.findOne({ r_account: user.id });
+      // if (!teacherID) {
+      //   return res
+      //     .status(404)
+      //     .json({ error: "teacher chua co thong tin chi tiet trong he thong" });
+      // }
+      const notificationDTO = getNotificationDTO(req.params);
       if (notificationDTO.hasOwnProperty("errMessage"))
         throw new CustomError(notificationDTO.errMessage, 400);
 
