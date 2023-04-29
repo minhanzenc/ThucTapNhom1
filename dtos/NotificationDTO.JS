@@ -2,7 +2,7 @@ const {
   validateString,
   validateObjectId,
 } = require("../validation/validation");
-function sendNotificationDto(reqBody, recipient) {
+function sendNotificationDto(reqBody, userId, recipient) {
   const input = reqBody;
   const errMessages = [];
 
@@ -10,10 +10,8 @@ function sendNotificationDto(reqBody, recipient) {
     errMessages.push("trường 'title' chưa hợp lệ");
   if (validateString(input.message))
     errMessages.push("trường 'messages' chưa hợp lệ");
-  if (validateObjectId(input.studentId))
-    errMessages.push("trường 'studentId' chưa hợp lệ");
-  if (validateObjectId(input.teacherId))
-    errMessages.push("trường 'teacherId' chưa hợp lệ");
+  // if (validateObjectId(input.studentId))
+  //   errMessages.push("trường 'studentId' chưa hợp lệ");
 
   if (errMessages.length > 0)
     return {
@@ -23,8 +21,8 @@ function sendNotificationDto(reqBody, recipient) {
     data: {
       title: input.title,
       message: input.message,
-      r_student: input.studentId,
-      r_teacher: input.teacherId,
+      r_student: recipient === "student" ? input.studentId : userId.id,
+      r_teacher: recipient === "teacher" ? input.teacherId : userId.id,
       recipient_id: recipient === "teacher" ? input.teacherId : input.studentId,
     },
   };

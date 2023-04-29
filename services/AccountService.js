@@ -1,36 +1,72 @@
 const { CustomError } = require("../errors/CustomError");
 const accountRepo = require("../repositories/AccountRepo");
+const { default: mongoose } = require("mongoose");
 const Student = require("../models/StudentModel");
 const Teacher = require("../models/TeacherModel");
 const bcrypt = require("bcrypt");
 const { signToken } = require("../helpers/signToken");
 
+// async function login(userDTO) {
+//   try {
+//     const foundUser = await accountRepo.getByEmail(userDTO.email);
+//     if (!foundUser) throw new CustomError("Email không tồn tại", 400);
+//     // const isSamePassword = await bcrypt.compareSync(
+//     //   userDTO.password,
+//     //   foundUser.password
+//     // );
+
+//     const isSamePassword = userDTO.password === foundUser.password;
+//     if (!isSamePassword)
+//       throw new CustomError("mật khẩu không trùng khớp", 400);
+//     const signedToken = signToken(foundUser);
+//     let ChildId = [];
+//     console.log("loginuser", foundUser);
+//     const r_account = foundUser._id;
+//     const acountId = await Teacher.find({ r_account });
+//     console.log(" teacher ", acountId);
+//     // if (foundUser.role == "teacher") {
+//     //   console.log("role teacher ");
+//     //   const acountId = await Teacher.find({
+//     //     r_account: "64423aba404db39e33316f07",
+//     //   });
+//     //   ChildId = acountId;
+//     // } else {
+//     //   ChildId = await Student.find({ r_account });
+//     // }
+//     console.log("chilId ", foundUser._id);
+//     return Promise.resolve({
+//       token: signedToken,
+//       mail: foundUser.email,
+//       role: foundUser.role,
+//       user: ChildId,
+//     });
+//     //return signToken;
+//   } catch (error) {
+//     return Promise.reject(new CustomError(error.toString(), 500));
+//   }
+// }
 async function login(userDTO) {
   try {
     const foundUser = await accountRepo.getByEmail(userDTO.email);
     if (!foundUser) throw new CustomError("Email không tồn tại", 400);
-    // const isSamePassword = await bcrypt.compareSync(
-    //   userDTO.password,
-    //   foundUser.password
-    // );
-
     const isSamePassword = userDTO.password === foundUser.password;
     if (!isSamePassword)
       throw new CustomError("mật khẩu không trùng khớp", 400);
     const signedToken = signToken(foundUser);
-    let ChildId;
-    console.log("loginuser", foundUser);
-    if (foundUser.role == "teacher") {
-      ChildId = await Teacher.find({ r_account: foundUser.id });
+    let acountId = null;
+    if (foundUser.role === "teacher") {
+      console.log("role teacher ");
+      acountId = await Teacher.findOne({ email: foundUser.email });
     } else {
-      ChildId = await Student.find({ r_account: foundUser.id });
+      acountId = await Student.findOne({ email: foundUser.email });
     }
+    console.log(" teacher ", acountId);
     return Promise.resolve({
       token: signedToken,
       mail: foundUser.email,
       role: foundUser.role,
+      user: acountId,
     });
-    //return signToken;
   } catch (error) {
     return Promise.reject(new CustomError(error.toString(), 500));
   }
