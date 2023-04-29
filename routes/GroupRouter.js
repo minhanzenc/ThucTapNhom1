@@ -45,12 +45,17 @@ router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
     if (!classroom) {
       return res.status(400).json({ message: "r_classroom không hợp lệ" });
     }
-    const newCondition = new ConditionToCreateGroup({
-      min: 1,
-      max: 5,
+    const existingCondition = await ConditionToCreateGroup.findOne({
       r_classroom,
     });
-    await newCondition.save();
+    if (!existingCondition) {
+      const newCondition = new ConditionToCreateGroup({
+        min: 1,
+        max: 5,
+        r_classroom,
+      });
+      await newCondition.save();
+    }
     const newGroup = new Group({ name, r_classroom, r_teacher: teacherID.id });
     await newGroup.save();
 
@@ -63,11 +68,12 @@ router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
 
 //them dieu kien min, max
 router.put(
-  "/conditionToCreateGroup",
+  "/conditionToCreateGroup/:r_classroom",
   verifyToken,
   authorize(["teacher"]),
   async (req, res) => {
-    const { max, min = 1, r_classroom } = req.body;
+    const { max, min = 1 } = req.body;
+    const { r_classroom } = req.params;
 
     try {
       // Kiểm tra r_classroom có tồn tại trong SubjectModel không
@@ -76,7 +82,14 @@ router.put(
         return res.status(400).json({ message: "r_classroom không hợp lệ" });
       }
 
-      const newCondition = new ConditionToCreateGroup.findOne({ r_classroom });
+      const newCondition = await ConditionToCreateGroup.findOne({
+        r_classroom,
+      });
+      if (!newCondition) {
+        return res
+          .status(404)
+          .json({ error: "Không tìm thấy điều kiện tương ứng" });
+      }
       newCondition.min = min;
       newCondition.max = max;
       await newCondition.save();
