@@ -38,8 +38,10 @@ async function getNotification(notificationDTO) {
     const notification = await NotificationRepo.findByRecipient(
       notificationDTO.recipient_id
     )
-      .populate("r_student", "firstName lastName")
-      .populate("r_teacher", "firstName lastName")
+      // .populate("r_student", "firstName lastName")
+      // .populate("r_teacher", "firstName lastName")
+      .populate("r_student")
+      .populate("r_teacher")
       .exec();
     return Promise.resolve(notification);
   } catch (error) {

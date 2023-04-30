@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const ObjectId = require("mongoose").Types.ObjectId;
 const Notification = require("../models/NotificationModel");
 const Student = require("../models/StudentModel");
+const Account = require("../models/AccountModel");
 const Teacher = require("../models/TeacherModel");
 const CustomError = require("../errors/CustomError");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
@@ -19,8 +21,19 @@ router.post(
   async (req, res) => {
     try {
       // const teacherId = req.user._id;
-      const { studentId, teacherId, title, message } = req.body;
-      const notificationDTO = sendNotificationDto(req.body, "student");
+      const { user } = req;
+      const teacherID = await Teacher.findOne({ r_account: user.id });
+      console.log("teacher ", teacherID.id);
+      if (!teacherID) {
+        return res
+          .status(404)
+          .json({ error: "teacher chua co thong tin chi tiet trong he thong" });
+      }
+      const notificationDTO = sendNotificationDto(
+        req.body,
+        teacherID,
+        "student"
+      );
       if (notificationDTO.hasOwnProperty("errMessage"))
         throw new CustomError(notificationDTO.errMessage, 400);
       const notification = await NotificationService.sendToTeacher(
@@ -28,6 +41,7 @@ router.post(
       );
 
       return res.status(201).json(notification);
+      //return res.status(201);
     } catch (error) {
       if (error instanceof CustomError) {
         return res.status(error.code).json({ message: error.message });
@@ -47,7 +61,19 @@ router.post(
   authorize(["student"]),
   async (req, res) => {
     try {
-      const notificationDTO = sendNotificationDto(req.body, "teacher");
+      const { user } = req;
+      const studentID = await Student.findOne({ r_account: user.id });
+
+      if (!studentID) {
+        return res.status(404).json({
+          error: "học sinh chua co thong tin chi tiet trong he thong",
+        });
+      }
+      const notificationDTO = sendNotificationDto(
+        req.body,
+        studentID,
+        "teacher"
+      );
       if (notificationDTO.hasOwnProperty("errMessage"))
         throw new CustomError(notificationDTO.errMessage, 400);
       const notification = await NotificationService.sendToStudent(
@@ -94,6 +120,13 @@ router.get(
   authorize(["teacher"]),
   async (req, res) => {
     try {
+      // const { user } = req;
+      // const teacherID = Teacher.findOne({ r_account: user.id });
+      // if (!teacherID) {
+      //   return res
+      //     .status(404)
+      //     .json({ error: "teacher chua co thong tin chi tiet trong he thong" });
+      // }
       const notificationDTO = getNotificationDTO(req.params);
       if (notificationDTO.hasOwnProperty("errMessage"))
         throw new CustomError(notificationDTO.errMessage, 400);
@@ -133,7 +166,7 @@ router.delete("/delete/:id", verifyToken, async (req, res) => {
 
 //gửi thông bao đến nhóm
 
-router.post("/group", async (req, res) => {
+router.post("/group", verifyToken, authorize(["teacher"]), async (req, res) => {
   try {
     const { title, message, r_teacher, r_group } = req.body;
 
@@ -152,6 +185,7 @@ router.post("/group", async (req, res) => {
     res.status(500).json({ message: "Failed to add notification" });
   }
 });
+//gui thong bao den classroom
 router.post("/classroom", async (req, res) => {
   try {
     const { title, message, r_teacher, r_classroom } = req.body;
