@@ -1,6 +1,8 @@
 const { Router, json } = require('express')
 const router = Router({ mergeParams: true })
 const classRoomStudentServices = require("../services/ClassRoomStudentService")
+const studentService = require("../services/StudentServices")
+const classRoomService = require("../services/ClassRoomServices")
 const { CustomError } = require("../errors/CustomError")
 
 const { default: mongoose } = require('mongoose')
@@ -45,7 +47,7 @@ router
             const classRoomStudentDTO = createClassRoomStudentDto(req.body);
             if (classRoomStudentDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(classRoomStudentDTO.errMessage, 400);
-            const createClassRoomStudent=await classRoomStudentServices.create(classRoomStudentDTO.data,session)
+            const createClassRoomStudent = await classRoomStudentServices.create(classRoomStudentDTO.data, session)
             await session.commitTransaction();
             res.status(201).json(createClassRoomStudent);
         } catch (error) {
@@ -53,6 +55,11 @@ router
             session.endSession();
             if (error instanceof CustomError)
                 res.status(error.code).json({ message: error.message });
+            if (11000 === error.code || 11001 === error.code){
+                const student = await studentService.getOneById(req.body.r_student)
+                const classroom = await classRoomService.getOneById(req.body.r_classroom)
+                res.status(400).json({ message: `Sinh viên ${student.lastName} đã tồn tại trong lớp ${classroom.name} ` });
+            }
             else res.status(500).json({ message: error.message });
             console.error(error.toString());
         }

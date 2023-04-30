@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-
+const uniqueValidator = require('mongoose-unique-validator');
 const subjectSchema = new mongoose.Schema({
   name:{
     type: String,
@@ -7,6 +7,6 @@ const subjectSchema = new mongoose.Schema({
     unique: true,
   }
 });
-
+subjectSchema.plugin(uniqueValidator, {message: '{VALUE} đã bị trùng' })
 const subject = mongoose.model("subject", subjectSchema);
 module.exports = subject;
