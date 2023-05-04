@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-
+const uniqueValidator = require('mongoose-unique-validator');
 const teacherSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -24,6 +24,6 @@ const teacherSchema = new mongoose.Schema({
     ref: "account",
   },
 });
-
+teacherSchema.plugin(uniqueValidator, {message: '{VALUE} đã bị trùng' })
 const teacher = mongoose.model("teacher", teacherSchema);
 module.exports = teacher;

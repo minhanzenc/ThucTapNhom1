@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require('mongoose-unique-validator');
 
 const studentSchema = new mongoose.Schema({
   firstName: {
@@ -33,6 +34,6 @@ const studentSchema = new mongoose.Schema({
     ref: "account",
   },
 });
-
+studentSchema.plugin(uniqueValidator, {message: '{VALUE} đã bị trùng' })
 const student = mongoose.model("student", studentSchema);
 module.exports = student;
