@@ -10,7 +10,7 @@ const CustomError = require("../errors/CustomError");
 const Request = require("../models/RequestModel");
 const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
-
+const classRoomStudentServices = require("../services/ClassRoomStudentService");
 const GroupService = require("../services/GroupService");
 const { checkGroupMax } = require("../middlewares/checkGroupMax");
 
@@ -166,7 +166,7 @@ router.post(
         r_group: group._id,
         r_student: req.body.r_student,
         r_classroom: group.r_classroom,
-        role: "member",
+        role: req.body.role,
       });
       await groupStudent.save();
 
@@ -223,7 +223,41 @@ router.post(
     }
   }
 );
+router.get(
+  "/:id",
+  verifyToken,
+  authorize(["teacher", "admin"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const group = await GroupService.getOneById(id);
+      return res.status(200).json(group);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
+router.get(
+  "/student-classroom/:id",
+  verifyToken,
+  authorize(["teacher"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const group = await GroupService.getOneById(id);
+      console.log(group.r_classroom, "r_Classroom");
+      const students = await classRoomStudentServices.getByClassRoomId(
+        group.r_classroom
+      );
 
+      // console.log("string", students);
+      // console.log("string 2", classRoom);
+      return res.status(200).json({ students });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
 // Lấy tất cả sinh viên có trong nhóm
 
 router.get("/students/:groupId", verifyToken, async (req, res) => {

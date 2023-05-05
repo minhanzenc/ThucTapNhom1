@@ -3,7 +3,7 @@ const router = Router({ mergeParams: true });
 const classRoomServices = require("../services/ClassRoomServices");
 const classRoomStudentServices = require("../services/ClassRoomStudentService");
 const { CustomError } = require("../errors/CustomError");
-
+const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { default: mongoose } = require("mongoose");
 const {
   createClassRoomDTO,
@@ -71,8 +71,8 @@ router
         const students = await classRoomStudentServices.getByClassRoomId(
           classRoom._id
         );
-        console.log("string", students);
-        console.log("string 2", classRoom);
+        // console.log("string", students);
+        // console.log("string 2", classRoom);
         return res.status(200).json({ students });
       } catch (error) {
         res.status(500).json(error);
@@ -92,6 +92,12 @@ router
         { ...classRoomDTO.data, r_teacher: req.user.id },
         session
       );
+      const newCondition = new ConditionToCreateGroup({
+        min: 1,
+        max: 5,
+        r_classroom: createSubject[0]._id,
+      });
+      await newCondition.save();
       await session.commitTransaction();
       res.status(201).json(createSubject);
     } catch (error) {
