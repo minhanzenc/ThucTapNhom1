@@ -26,7 +26,7 @@ function deleteClassRoomStudentDto(id)
         errMessage.push("ID không hợp lệ")
     }
     if(errMessage.leng>0){
-        return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
+        return { errMessage: errMessage.reduce((total, err) => `${total} ${err}---`, "") }
     }
     return {data:{id}}
 }
