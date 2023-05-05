@@ -1,43 +1,42 @@
-const { validateString, validateObjectId } = require("../validation/validation")
-function createClassRoomDTO(input) {
-    const errMessages = []
+const { validateString, validateObjectId } = require("../validation/validation");
 
-    if (validateString(input.name))
-        errMessages.push("trường 'name' chưa hợp lệ")
-    if (validateString(input.period))
-        errMessages.push("trường 'ca học' chưa hợp lệ")
-    if (validateObjectId(input.r_subject))
-        errMessages.push("trường 'r_subject' chưa hợp lệ")
-    if (errMessages.length > 0)
-        return { errMessage: errMessages.reduce((total, err) => `${total} ${err} ---`, "") }
-    return { data: { name: input.name,period: input.period, r_subject: input.r_subject } }
+function createGroupDTO(input){
+    const errMessage=[]
+    if(validateString(input.name)){
+        errMessage.push("trường 'Name' chưa hợp lệ")
+    }
+    if(errMessage.length>0){
+        return errMessage
+    }
+    const data={name:input.name}
+    return {data}
 }
-function deleteClassRoomDTO(id) {
-    const errMessages = []
-
-    if (validateObjectId(id))
-        errMessages.push("Id không hợp lệ")
-
-    if (errMessages.length > 0)
-        return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
-
-    return { data: { id } }
-
+function deleteGroupDTO(id){
+    const errMessage=[]
+    if(validateObjectId(id)){
+        errMessage.push("ID không hợp lệ")
+    }
+    if(errMessage.length>0)
+    {
+        return errMessage
+    }
+    const data={id}
+    return {data}
 }
-function updateClassRoomDTO(id, reqBody) {
-    const input = reqBody
-    console.log(input)
-    const errMessages = []
-    if (validateString(input.name))
-        errMessages.push("trường 'name' chưa hợp lệ")
-    if (validateString(input.period))
-        errMessages.push("trường 'ca học' chưa hợp lệ")
-    if (validateObjectId(input.r_subject))
-        errMessages.push("trường 'r_subject' chưa hợp lệ")
-    if (errMessages.length > 0)
-        return { errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, "") }
-
-    const data = { id, name: input.name,period: input.period, r_subject: input.r_subject }
-    return { data }
+function updateGroupDTO(id,reqBody){
+    const errMessage=[]
+    const input=reqBody
+    if(validateObjectId(id)){
+        errMessage.push("ID không hợp lệ")
+    }
+    if(validateString(input.name))
+    {
+        errMessage.push("trường 'name' chưa hợp lệ")
+    }
+    if(errMessage.length>0){
+        return {errMessage:errMessage.reduce((total,err)=>`${total} ${err}---`,"")}
+    }
+    const data={id,name:input.name}
+    return {data}
 }
-module.exports = { createClassRoomDTO, deleteClassRoomDTO, updateClassRoomDTO }
+module.exports={createGroupDTO,deleteGroupDTO,updateGroupDTO}

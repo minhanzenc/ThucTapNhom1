@@ -13,6 +13,8 @@ const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 const classRoomStudentServices = require("../services/ClassRoomStudentService");
 const GroupService = require("../services/GroupService");
 const { checkGroupMax } = require("../middlewares/checkGroupMax");
+const { updateGroupDTO } = require("../dtos/GroupDTO");
+const { default: mongoose } = require("mongoose");
 
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
@@ -101,7 +103,26 @@ router.put(
     }
   }
 );
+router.put("/:id", verifyToken, authorize(["teacher"]), async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const groupDTO = updateGroupDTO(req.params.id, req.body);
+    if (groupDTO.hasOwnProperty("errMessage"))
+      throw new CustomError(groupDTO.errMessage, 400);
+    const updateGroup = await GroupService.updateOne(groupDTO.data, session);
+    await session.commitTransaction();
+    res.status(201).json(updateGroup);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
 
+    if (error instanceof CustomError)
+      res.status(error.code).json({ message: error.message });
+    else res.status(500).json({ message: error.message });
+    console.error(error.toString());
+  }
+});
 //lay  dieu kien min max cua group
 router.get("/conditionToCreateGroup/:r_classroom", async (req, res) => {
   const { r_classroom } = req.params;

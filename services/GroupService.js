@@ -9,7 +9,7 @@ function deleteOne(id, session) {
 function getAll(classRoomId, query) {
   return groupRepo.getAll(classRoomId, query);
 }
-function update(groupDTO, session) {
+function updateOne(groupDTO, session) {
   return groupRepo.updateOne(groupDTO, session);
 }
 function getByclassRoomId(classRoomId) {
@@ -22,7 +22,7 @@ module.exports = {
   create,
   deleteOne,
   getAll,
-  update,
+  updateOne,
   getOneById,
   getByclassRoomId,
 };
