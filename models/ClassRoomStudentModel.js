@@ -16,6 +16,18 @@ const classRoomStudentSchema = new mongoose.Schema({
     ref: "student",
   },
 });
+classRoomStudentSchema.pre("save", async function (next) {
+  const existingLeader = await this.constructor.findOne({
+    r_group: this.r_group,
+    role: "class_monitor",
+  });
+
+  if (this.role === "class_monitor" && existingLeader) {
+    this.role = "member";
+  }
+
+  next();
+});
 classRoomStudentSchema.index(
   { r_classroom: 1, r_student: 1 },
   { unique: true }
