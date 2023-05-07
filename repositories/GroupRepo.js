@@ -33,6 +33,7 @@ const getByClassRoomId = (classRoomId) => {
     r_classroom: classRoomId,
   });
 };
+
 const updateOne = ({ id, name, r_classroom,r_teacher}, session) => {
   return group
     .findOneAndUpdate(
