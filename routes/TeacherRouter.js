@@ -54,24 +54,24 @@ router
         session
       );
       await session.commitTransaction();
-      // let transporter = nodemailer.createTransport({
-      //   host: "smtp.gmail.com",
-      //   port: 587,
-      //   secure: false, // true for 465, false for other ports
-      //   auth: {
-      //     user: "minhanzenc@gmail.com", // generated ethereal user
-      //     pass: "vngwetijvqacllke",
-      //   },
-      //   //eznlnrubumhqewrb
-      // });
+      let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+          user: "testapi231@gmail.com", // generated ethereal user
+          pass: "knasbslpqshqhnlw",
+        },
+        //eznlnrubumhqewrb
+      });
 
-      // // send mail with defined transport object
-      // await transporter.sendMail({
-      //   from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
-      //   to: createdAccount[0].email, // list of receivers0
-      //   subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
-      //   html: `<h1>mat khau cua ban la: ${createdAccount[0].password}</h1>`, // html body
-      // });
+      // send mail with defined transport object
+      await transporter.sendMail({
+        from: '"Phòng đào tạo " <testapi231@gmail.com>', // sender address
+        to: createdAccount[0].email, // list of receivers0
+        subject: "Vui lòng đăng nhập vào đây để đổi mật khẩu", // Subject line
+        html: `<h1>Mật khẩu của bạn là: ${createdAccount[0].password}</h1>`, // html body
+      });
       res.status(201).json(createdTeacher);
     } catch (error) {
       await session.abortTransaction();

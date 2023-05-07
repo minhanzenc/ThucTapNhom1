@@ -9,6 +9,10 @@ const classRoomSchema = new mongoose.Schema({
     type: String,
     required: 'trường "Ca học" phải được truyền vào',
   },
+  time:{
+    type:String,
+    required: 'trường "thời gian" phải được truyền vào',
+  },
   r_teacher: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "teacher",

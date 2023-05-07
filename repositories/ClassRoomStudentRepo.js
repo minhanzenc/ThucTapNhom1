@@ -13,10 +13,16 @@ const create=({ role, r_classroom, r_student },session)=>{
 const getByClassRoomId = (classRoomId) => {
     return classRoomStudent.find({r_classroom: classRoomId}).populate('r_student')
 }
+const getByRole = (id,role) => {
+    return classRoomStudent.findOne({
+        r_classroom:id,
+        role
+    });
+  };
 const getByStudentId=(idStudent)=>{
     return classRoomStudent.find({r_student:idStudent})
 }
 const deleteOne = (id,session) => {
     return classRoomStudent.findByIdAndDelete(id,{session})
 }
-module.exports = {getByClassRoomId, createMany ,getByStudentId,deleteOne,create}
+module.exports = {getByClassRoomId, createMany ,getByStudentId,getByRole,deleteOne,create}

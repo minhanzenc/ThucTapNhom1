@@ -1,7 +1,7 @@
 const classRoom = require("../models/ClassRoomModel");
 
-const create = ({ name, period, r_teacher, r_subject }, session) => {
-  return classRoom.create([{ name, period, r_teacher, r_subject }], {
+const create = ({ name, period,time, r_teacher, r_subject }, session) => {
+  return classRoom.create([{ name, period,time, r_teacher, r_subject }], {
     session,
   });
 };
@@ -38,11 +38,11 @@ const getBySubjectId = (subjectId) => {
     r_subject: subjectId,
   });
 };
-const updateOne = ({ id, name, period, r_teacher, r_subject }, session) => {
+const updateOne = ({ id, name, period,time, r_teacher, r_subject }, session) => {
   return classRoom
     .findOneAndUpdate(
       { _id: id },
-      { name, period, r_teacher, r_subject },
+      { name, period,time, r_teacher, r_subject },
       { new: true }
     )
     .session(session);

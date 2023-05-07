@@ -60,18 +60,18 @@ router
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {
-          user: 'minhanzenc@gmail.com', // generated ethereal user
-          pass: 'vngwetijvqacllke'
+          user: 'testapi231@gmail.com', // generated ethereal user
+          pass: 'knasbslpqshqhnlw'
         },
         //eznlnrubumhqewrb
       });
 
       // send mail with defined transport object
       await transporter.sendMail({
-        from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+        from: '"Phòng đào tạo" <testapi231@gmail.com>', // sender address
         to: createdAccount[0].email, // list of receivers0
-        subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
-        html: `<h1>mat khau cua ban la: ${createdAccount[0].password}</h1>`, // html body
+        subject: "Vui lòng đăng nhập vào đây để đổi mật khẩu", // Subject line
+        html: `<h1>Mật khẩu của bạn là: ${createdAccount[0].password}</h1>`, // html body
       });
 
       res.status(201).json(createdStudent);
@@ -126,18 +126,18 @@ router
           port: 587,
           secure: false, // true for 465, false for other ports
           auth: {
-            user: 'minhanzenc@gmail.com', // generated ethereal user
-            pass: 'vngwetijvqacllke'
+            user: 'testapi231@gmail.com', // generated ethereal user
+            pass: 'knasbslpqshqhnlw'
           },
         });
 
         // send mail with defined transport object
         for (const account of createdAccounts) {
           await transporter.sendMail({
-            from: '"Phong dao tao " <minhanzenc@gmail.com>', // sender address
+            from: '"Phòng đào tạo " <testapi231@gmail.com>', // sender address
             to: account.email, // list of receivers0
-            subject: "Vui long dang nhap vao day de doi mat khau", // Subject line
-            html: `<h1>mat khau cua ban la: ${account.password}</h1>`, // html body
+            subject: "Vui lòng đăng nhập vào đây để đổi mật khẩu", // Subject line
+            html: `<h1>Mật khẩu của bạn là: ${account.password}</h1>`, // html body
           });
         }
         res.status(201).json(createdStudent);

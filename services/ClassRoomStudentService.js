@@ -19,4 +19,7 @@ function deleteOne(id, session) {
 function create(classRoomStudentDTO,session){
   return classRoomStudentRepo.create(classRoomStudentDTO,session)
 }
-module.exports = { createMany, getByClassRoomId ,getByStudentId,deleteOne,getAll,create};
+function getByRole(id,role){
+  return classRoomStudentRepo.getByRole(id,role)
+}
+module.exports = { createMany, getByClassRoomId ,getByStudentId,deleteOne,getAll,create,getByRole};

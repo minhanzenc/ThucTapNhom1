@@ -54,7 +54,6 @@ router
 
             if (classRoomDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(classRoomDTO.errMessage, 400);
-
             const createSubject = await classRoomServices.create(
                 { ...classRoomDTO.data, r_teacher: req.user.id },
                 session

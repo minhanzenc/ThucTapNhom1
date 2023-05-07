@@ -44,6 +44,15 @@ router
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
+            if(req.body.role=="class_monitor"){
+                const check = await classRoomStudentServices.getByRole(req.body.r_classroom,req.body.role);
+                if (check) {
+                    throw new CustomError(
+                        "không thêm được vì đã tồn tại classmonitor",
+                        400
+                    );
+                }
+            }
             const classRoomStudentDTO = createClassRoomStudentDto(req.body);
             if (classRoomStudentDTO.hasOwnProperty("errMessage"))
                 throw new CustomError(classRoomStudentDTO.errMessage, 400);
@@ -55,13 +64,12 @@ router
             session.endSession();
             if (error instanceof CustomError)
                 res.status(error.code).json({ message: error.message });
-            if (11000 === error.code || 11001 === error.code){
+            else if (11000 === error.code || 11001 === error.code) {
                 const student = await studentService.getOneById(req.body.r_student)
                 const classroom = await classRoomService.getOneById(req.body.r_classroom)
                 res.status(400).json({ message: `Sinh viên ${student.lastName} đã tồn tại trong lớp ${classroom.name} ` });
             }
             else res.status(500).json({ message: error.message });
-            console.error(error.toString());
         }
     })
     .delete("/:id", async (req, res) => {
