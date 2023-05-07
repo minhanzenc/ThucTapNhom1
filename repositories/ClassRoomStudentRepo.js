@@ -22,4 +22,12 @@ const getOneById = (id) => {
 const deleteOne = (id,session) => {
     return classRoomStudent.findByIdAndDelete(id,{session})
 }
-module.exports = {getOneById,getByClassRoomId, createMany ,getByStudentId,deleteOne,create}
+const updateOne = ({ id, role}, session) => {
+    return classRoomStudent
+      .updateOne(
+        { _id: id },
+        { role},
+      )
+      .session(session);
+  };
+module.exports = {getOneById,getByClassRoomId, createMany ,getByStudentId,deleteOne,create,updateOne}

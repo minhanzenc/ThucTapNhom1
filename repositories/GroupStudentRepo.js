@@ -19,4 +19,12 @@ const getByStudentId=(idStudent)=>{
 const deleteOne = (id,session) => {
     return groupStudent.findByIdAndDelete(id,{session})
 }
-module.exports = {getByGroupId, createMany ,getByStudentId,deleteOne,create}
+const updateOne = ({ id, role}, session) => {
+    return classRoomStudent
+      .updateOne(
+        { _id: id },
+        { role},
+      )
+      .session(session);
+  };
+module.exports = {updateOne,getByGroupId, createMany ,getByStudentId,deleteOne,create}

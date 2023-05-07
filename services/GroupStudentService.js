@@ -19,6 +19,12 @@ function deleteOne(id, session) {
 function create(groupStudentDTO, session) {
   return groupStudentRepo.create(groupStudentDTO, session);
 }
+function getOneById(id) {
+  return groupStudentRepo.getOneById(id);
+}
+function updateOne(groupStudentDTO, session) {
+  return groupStudentRepo.updateOne(groupStudentDTO, session);
+}
 module.exports = {
   createMany,
   getByGroupId,
@@ -26,4 +32,6 @@ module.exports = {
   deleteOne,
   getAll,
   create,
+  getOneById,
+  updateOne,
 };

@@ -22,6 +22,9 @@ function create(classRoomStudentDTO, session) {
 function getOneById(id) {
   return classRoomStudentRepo.getOneById(id);
 }
+function updateOne(ClassRoomStudentDTO, session) {
+  return classRoomStudentRepo.updateOne(ClassRoomStudentDTO, session);
+}
 module.exports = {
   createMany,
   getByClassRoomId,
@@ -29,5 +32,6 @@ module.exports = {
   deleteOne,
   getAll,
   create,
-  getOneById
+  getOneById,
+  updateOne,
 };

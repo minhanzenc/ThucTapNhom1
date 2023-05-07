@@ -16,6 +16,7 @@ const { validateArray } = require("../validation/validation");
 const {
   createGroupStudentDto,
   deleteGroupStudentDto,
+  updateGroupStudentDTO,
 } = require("../dtos/GroupStudentDTO");
 const { checkGroupMax } = require("../middlewares/checkGroupMax");
 
@@ -73,16 +74,18 @@ router
           res.status(error.code).json({ message: error.message });
         if (11000 === error.code || 11001 === error.code) {
           const student = await studentService.getOneById(req.body.r_student);
-          const groupstudent = await groupStudentServices.getByStudentId(req.body.r_student);
-          if (groupstudent.r_group == req.body.r_group) {
+          const groupstudent = await groupStudentServices.getByStudentId(
+            req.body.r_student
+          );
+          if (groupstudent.r_group != req.body.r_group) {
             res.status(400).json({
               message: `Sinh viên ${student.firstName} ${student.lastName} đã tồn tại trong group khác`,
             });
+          } else {
+            res.status(400).json({
+              message: `Sinh viên ${student.firstName} ${student.lastName} đã tồn tại trong group`,
+            });
           }
-          const group = await groupService.getOneById(req.body.r_group);
-          res.status(400).json({
-            message: `Sinh viên ${student.firstName} ${student.lastName} đã tồn tại trong group`,
-          });
         } else res.status(500).json({ message: error.message });
         console.error(error.toString());
       }
@@ -106,6 +109,42 @@ router
       else res.status(500).json({ message: error.message });
       console.log(error.toString());
     }
-  });
-
+  })
+  .put("/:id", async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const groupStudentDTOs = updateGroupStudentDTO(req.params.id, req.body);
+      if (groupStudentDTOs.hasOwnProperty("errMessage"))
+        throw new CustomError(groupStudentDTOs.errMessage, 400);
+      const updatedGroupStudent = await groupStudentServices.updateOne(
+        groupStudentDTOs.data,
+        session
+      );
+      await session.commitTransaction();
+      res.status(201).json(updatedGroupStudent);
+    } catch (error) {
+      await session.abortTransaction();
+      if (error instanceof CustomError)
+        res.status(error.code).json({ message: error.message });
+      else res.status(500).json({ message: error.message });
+      console.error(error.toString());
+    } finally {
+      session.endSession();
+    }
+  })
+  .get(
+    "/:id",
+    verifyToken,
+    authorize(["teacher", "admin"]),
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const groupStudent = await groupStudentServices.getOneById(id);
+        return res.status(200).json(groupStudent);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    }
+  )
 module.exports = { router };

@@ -33,4 +33,21 @@ function deleteGroupStudentDto(id)
     }
     return {data:{id}}
 }
-module.exports = { createGroupStudentDto,deleteGroupStudentDto }
+function updateGroupStudentDTO(id, reqBody) {
+    const input = reqBody;
+    console.log(input);
+    const errMessages = [];
+    if (validateEnum(RoleStudentEnum, input.role))
+      errMessages.push("trường 'role' chưa hợp lệ");
+    if (errMessages.length > 0)
+      return {
+        errMessage: errMessages.reduce((total, err) => `${total} ${err}---`, ""),
+      };
+  
+    const data = {
+      id,
+      role: input.role,
+    };
+    return { data };
+  }
+module.exports = { createGroupStudentDto,deleteGroupStudentDto,updateGroupStudentDTO }

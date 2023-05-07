@@ -16,6 +16,7 @@ const { validateArray } = require("../validation/validation");
 const {
   createClassRoomStudentDto,
   deleteClassRoomStudentDto,
+  updateClassRoomStudentDTO,
 } = require("../dtos/ClassRoomStudentDTO");
 
 router
@@ -98,6 +99,42 @@ router
       else res.status(500).json({ message: error.message });
       console.log(error.toString());
     }
-  });
-  
+  })
+  .put("/:id", async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      const classRoomStudentDTOs = updateClassRoomStudentDTO(req.params.id, req.body);
+      if (classRoomStudentDTOs.hasOwnProperty("errMessage"))
+        throw new CustomError(classRoomStudentDTOs.errMessage, 400);
+      const updatedClassRoomStudent = await classRoomStudentServices.updateOne(
+        classRoomStudentDTOs.data,
+        session
+      );
+      await session.commitTransaction();
+      res.status(201).json(updatedClassRoomStudent);
+    } catch (error) {
+      await session.abortTransaction();
+      if (error instanceof CustomError)
+        res.status(error.code).json({ message: error.message });
+      else res.status(500).json({ message: error.message });
+      console.error(error.toString());
+    } finally {
+      session.endSession();
+    }
+  })
+  .get(
+    "/:id",
+    verifyToken,
+    authorize(["teacher", "admin"]),
+    async (req, res) => {
+      try {
+        const { id } = req.params;
+        const classRoomStudent = await classRoomStudentServices.getOneById(id);
+        return res.status(200).json(classRoomStudent);
+      } catch (error) {
+        res.status(500).json(error);
+      }
+    }
+  )
 module.exports = { router };

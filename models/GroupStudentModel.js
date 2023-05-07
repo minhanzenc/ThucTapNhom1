@@ -22,7 +22,8 @@ const groupStudentSchema = new mongoose.Schema({
     required: true,
   },
 });
-groupstudentSchema.pre("save", async function (next) {
+
+groupStudentSchema.pre("save", async function (next) {
   const existingLeader = await this.constructor.findOne({
     r_group: this.r_group,
     role: "leader",
