@@ -16,7 +16,10 @@ const getByClassRoomId = (classRoomId) => {
 const getByStudentId=(idStudent)=>{
     return classRoomStudent.find({r_student:idStudent})
 }
+const getOneById = (id) => {
+    return classRoomStudent.findById({ _id: id, active: true });
+  };
 const deleteOne = (id,session) => {
     return classRoomStudent.findByIdAndDelete(id,{session})
 }
-module.exports = {getByClassRoomId, createMany ,getByStudentId,deleteOne,create}
+module.exports = {getOneById,getByClassRoomId, createMany ,getByStudentId,deleteOne,create}

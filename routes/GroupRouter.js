@@ -11,6 +11,7 @@ const Request = require("../models/RequestModel");
 const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 const classRoomStudentServices = require("../services/ClassRoomStudentService");
+const GroupStudentServices = require("../services/GroupStudentService")
 const GroupService = require("../services/GroupService");
 const { checkGroupMax } = require("../middlewares/checkGroupMax");
 const { updateGroupDTO } = require("../dtos/GroupDTO");
@@ -19,16 +20,14 @@ const { default: mongoose } = require("mongoose");
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
 router.get("/classroom/:r_classroom", verifyToken, async (req, res) => {
-  const { r_classroom } = req.params;
-  console.log("r_classroom ", r_classroom);
   try {
+    const { r_classroom } = req.params;
     const groups = await Group.find({ r_classroom });
     res.json(groups);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
-
 // TAO GROUP .TRUYEN TEN NHOM VOI R_classroom
 router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
   const { name, r_classroom } = req.body;
@@ -64,7 +63,7 @@ router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
     res.json(newGroup);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("da ton tai Lỗi server");
+    res.status(500).send("Nhóm đã tồn tại");
   }
 });
 
@@ -263,6 +262,7 @@ router.get(
     }
   }
 );
+
 router.get(
   "/student-classroom/:id",
   verifyToken,
@@ -270,10 +270,31 @@ router.get(
   async (req, res) => {
     try {
       const { id } = req.params;
+      console.log()
       const group = await GroupService.getOneById(id);
-      console.log(group.r_classroom, "r_Classroom");
       const students = await classRoomStudentServices.getByClassRoomId(
         group.r_classroom
+      );
+
+      // console.log("string", students);
+      // console.log("string 2", classRoom);
+      return res.status(200).json({ students });
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
+router.get(
+  "/student-group/:id",
+  verifyToken,
+  authorize(["teacher"]),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const group = await GroupService.getOneById(id);
+      console.log("hello",group)
+      const students = await GroupStudentServices.getByGroupId(
+        group._id
       );
 
       // console.log("string", students);
