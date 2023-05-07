@@ -11,7 +11,7 @@ const Request = require("../models/RequestModel");
 const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
 const classRoomStudentServices = require("../services/ClassRoomStudentService");
-const GroupStudentServices = require("../services/GroupStudentService")
+const GroupStudentServices = require("../services/GroupStudentService");
 const GroupService = require("../services/GroupService");
 const { checkGroupMax } = require("../middlewares/checkGroupMax");
 const { updateGroupDTO } = require("../dtos/GroupDTO");
@@ -270,7 +270,7 @@ router.get(
   async (req, res) => {
     try {
       const { id } = req.params;
-      console.log()
+      console.log();
       const group = await GroupService.getOneById(id);
       const students = await classRoomStudentServices.getByClassRoomId(
         group.r_classroom
@@ -292,10 +292,8 @@ router.get(
     try {
       const { id } = req.params;
       const group = await GroupService.getOneById(id);
-      console.log("hello",group)
-      const students = await GroupStudentServices.getByGroupId(
-        group._id
-      );
+      console.log("hello", group);
+      const students = await GroupStudentServices.getByGroupId(group._id);
 
       // console.log("string", students);
       // console.log("string 2", classRoom);
