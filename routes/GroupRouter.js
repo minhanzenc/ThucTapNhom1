@@ -164,24 +164,9 @@ router.post(
     try {
       const group = req.group;
       // console.log("student id ", req.body.r_student);
-      // const group = await Group.findById(groupId);
       if (!group) {
         return res.status(404).json({ error: "Group not found" });
       }
-      // const condition = await ConditionToCreateGroup.find({
-      //   r_classroom: group.r_classroom,
-      // });
-      // console.log("condition max", condition[0].max);
-
-      // const countGroupStudents = await GroupStudent.countDocuments({
-      //   r_group: group._id,
-      // });
-      // console.log("count ", countGroupStudents);
-      // if (countGroupStudents >= condition[0].max) {
-      //   return res
-      //     .status(400)
-      //     .json({ error: "Group has reached maximum number of students" });
-      // }
       console.log("group id: ", group);
       const groupStudent = new GroupStudent({
         r_group: group._id,
@@ -218,11 +203,20 @@ router.post(
 // ]
 router.post(
   "/multipleInsertStudent",
+  verifyToken,
   authorize(["teacher"]),
   async (req, res) => {
     const data = req.body;
+    let teacherFound = false;
 
     try {
+      for (let student of data) {
+        if (student.role === "leader" && !teacherFound) {
+          teacherFound = true;
+        } else {
+          student.role = "member";
+        }
+      }
       const condition = await ConditionToCreateGroup.findOne({
         r_classroom: data[0].r_classroom,
       });
@@ -235,6 +229,17 @@ router.post(
           .status(400)
           .send(`Số lượng bản ghi vượt quá giới hạn (${condition.max})`);
         return;
+      }
+      for (let i = 0; i < data.length; i++) {
+        let existingLeader = await GroupStudent.findOne({
+          r_group: data[i].r_group,
+          role: "leader",
+        });
+
+        if (data[i].role === "leader" && existingLeader) {
+          // If a leader already exists, set the new record's role to "member"
+          data[i].role = "member";
+        }
       }
       const newRecords = await GroupStudent.insertMany(data);
       res.json(newRecords);
@@ -285,7 +290,7 @@ router.get("/students/:groupId", verifyToken, async (req, res) => {
   try {
     const groupStudents = await GroupStudent.find({
       r_group: req.params.groupId,
-    });
+    }).populate("r_student");
     const group = await Group.findById(req.params.groupId).populate(
       "r_classroom"
     );
@@ -293,7 +298,7 @@ router.get("/students/:groupId", verifyToken, async (req, res) => {
       (groupStudent) => groupStudent.r_student
     );
     const students = await Student.find({ _id: { $in: studentIds } });
-    res.status(200).send({ students, group });
+    res.status(200).send({ students, group, groupStudents });
   } catch (error) {
     res.status(500).send(error);
   }

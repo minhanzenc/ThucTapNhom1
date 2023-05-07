@@ -19,6 +19,17 @@ const groupstudentSchema = new mongoose.Schema({
     ref: "classroom",
   },
 });
+groupstudentSchema.pre("save", async function (next) {
+  const existingLeader = await this.constructor.findOne({
+    r_group: this.r_group,
+    role: "leader",
+  });
 
+  if (this.role === "leader" && existingLeader) {
+    this.role = "member";
+  }
+
+  next();
+});
 const groupstudent = mongoose.model("groupstudent", groupstudentSchema);
 module.exports = groupstudent;
