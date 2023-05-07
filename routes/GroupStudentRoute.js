@@ -61,7 +61,7 @@ router
         const groupStudentDTO = createGroupStudentDto(req.body);
         if (groupStudentDTO.hasOwnProperty("errMessage"))
           throw new CustomError(groupStudentDTO.errMessage, 400);
-          // Rào lại nếu muốn tự đổi role sang member nếu có leader r
+        // Rào lại nếu muốn tự đổi role sang member nếu có leader r
         if (req.body.role == RoleStudentEnum.LEADER) {
           const checkLeader = await groupStudentServices.getOne({
             r_group: req.body.r_group,
