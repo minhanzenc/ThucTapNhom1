@@ -2,7 +2,7 @@ const { Router, json } = require("express");
 const router = Router({ mergeParams: true });
 const groupStudentServices = require("../services/GroupStudentService");
 const studentService = require("../services/StudentServices");
-const groupService = require("../services/GroupService");
+const RoleStudentEnum = require("../enums/RoleStudentEnums");
 const { CustomError } = require("../errors/CustomError");
 
 const { default: mongoose } = require("mongoose");
@@ -61,6 +61,17 @@ router
         const groupStudentDTO = createGroupStudentDto(req.body);
         if (groupStudentDTO.hasOwnProperty("errMessage"))
           throw new CustomError(groupStudentDTO.errMessage, 400);
+          // Rào lại nếu muốn tự đổi role sang member nếu có leader r
+        if (req.body.role == RoleStudentEnum.LEADER) {
+          const checkLeader = await groupStudentServices.getOne({
+            r_group: req.body.r_group,
+            role: RoleStudentEnum.LEADER,
+          });
+          if (checkLeader) {
+            throw new CustomError("Nhóm đã tồn tại leader", 400);
+          }
+        }
+        // Đến đây là hết
         const createGroupStudent = await groupStudentServices.create(
           groupStudentDTO.data,
           session
@@ -72,12 +83,12 @@ router
         session.endSession();
         if (error instanceof CustomError)
           res.status(error.code).json({ message: error.message });
-        if (11000 === error.code || 11001 === error.code) {
+        else if (11000 === error.code || 11001 === error.code) {
           const student = await studentService.getOneById(req.body.r_student);
           const groupstudent = await groupStudentServices.getByStudentId(
             req.body.r_student
           );
-          if (groupstudent.r_group != req.body.r_group) {
+          if (groupstudent[0].r_group != req.body.r_group) {
             res.status(400).json({
               message: `Sinh viên ${student.firstName} ${student.lastName} đã tồn tại trong group khác`,
             });
@@ -117,6 +128,18 @@ router
       const groupStudentDTOs = updateGroupStudentDTO(req.params.id, req.body);
       if (groupStudentDTOs.hasOwnProperty("errMessage"))
         throw new CustomError(groupStudentDTOs.errMessage, 400);
+      if (req.body.role == RoleStudentEnum.LEADER) {
+        const groupStudent = await groupStudentServices.getOneById(
+          req.params.id
+        );
+        const checkLeader = await groupStudentServices.getOne({
+          r_group: groupStudent.r_group,
+          role: RoleStudentEnum.LEADER,
+        });
+        if (checkLeader) {
+          throw new CustomError("Nhóm đã tồn tại leader", 400);
+        }
+      }
       const updatedGroupStudent = await groupStudentServices.updateOne(
         groupStudentDTOs.data,
         session
@@ -146,5 +169,5 @@ router
         res.status(500).json(error);
       }
     }
-  )
+  );
 module.exports = { router };

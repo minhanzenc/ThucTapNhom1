@@ -22,6 +22,9 @@ function create(classRoomStudentDTO, session) {
 function getOneById(id) {
   return classRoomStudentRepo.getOneById(id);
 }
+function getOne(query) {
+  return classRoomStudentRepo.getOne(query);
+}
 function updateOne(ClassRoomStudentDTO, session) {
   return classRoomStudentRepo.updateOne(ClassRoomStudentDTO, session);
 }
@@ -34,4 +37,5 @@ module.exports = {
   create,
   getOneById,
   updateOne,
+  getOne,
 };

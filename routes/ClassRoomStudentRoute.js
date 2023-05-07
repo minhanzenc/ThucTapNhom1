@@ -3,6 +3,7 @@ const router = Router({ mergeParams: true });
 const classRoomStudentServices = require("../services/ClassRoomStudentService");
 const studentService = require("../services/StudentServices");
 const classRoomService = require("../services/ClassRoomServices");
+const RoleGroupEnum = require("../enums/RoleGroupEnum");
 const { CustomError } = require("../errors/CustomError");
 
 const { default: mongoose } = require("mongoose");
@@ -55,6 +56,17 @@ router
       const classRoomStudentDTO = createClassRoomStudentDto(req.body);
       if (classRoomStudentDTO.hasOwnProperty("errMessage"))
         throw new CustomError(classRoomStudentDTO.errMessage, 400);
+      // Rào lại nếu muốn tự đổi role sang member nếu có class monitor r
+      if (req.body.role == RoleGroupEnum.CLASS_MONITOR) {
+        const checkClassMonitor = await classRoomStudentServices.getOne({
+          r_classroom: req.body.r_classroom,
+          role: RoleGroupEnum.CLASS_MONITOR,
+        });
+        if (checkClassMonitor) {
+          throw new CustomError("Lớp đã tồn tại class monitor", 400);
+        }
+      }
+      // Đến đây là hết
       const createClassRoomStudent = await classRoomStudentServices.create(
         classRoomStudentDTO.data,
         session
@@ -66,7 +78,7 @@ router
       session.endSession();
       if (error instanceof CustomError)
         res.status(error.code).json({ message: error.message });
-      if (11000 === error.code || 11001 === error.code) {
+      else if (11000 === error.code || 11001 === error.code) {
         const student = await studentService.getOneById(req.body.r_student);
         const classroom = await classRoomService.getOneById(
           req.body.r_classroom
@@ -100,13 +112,29 @@ router
       console.log(error.toString());
     }
   })
+
   .put("/:id", async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-      const classRoomStudentDTOs = updateClassRoomStudentDTO(req.params.id, req.body);
+      const classRoomStudentDTOs = updateClassRoomStudentDTO(
+        req.params.id,
+        req.body
+      );
       if (classRoomStudentDTOs.hasOwnProperty("errMessage"))
         throw new CustomError(classRoomStudentDTOs.errMessage, 400);
+      if (req.body.role == RoleGroupEnum.CLASS_MONITOR) {
+        const classRoomStudent = await classRoomStudentServices.getOneById(
+          req.params.id
+        );
+        const checkClassMonitor = await classRoomStudentServices.getOne({
+          r_classroom: classRoomStudent.r_classroom,
+          role: RoleGroupEnum.CLASS_MONITOR,
+        });
+        if (checkClassMonitor) {
+          throw new CustomError("Lớp đã tồn tại class monitor", 400);
+        }
+      }
       const updatedClassRoomStudent = await classRoomStudentServices.updateOne(
         classRoomStudentDTOs.data,
         session
@@ -123,6 +151,7 @@ router
       session.endSession();
     }
   })
+
   .get(
     "/:id",
     verifyToken,
@@ -136,5 +165,5 @@ router
         res.status(500).json(error);
       }
     }
-  )
+  );
 module.exports = { router };

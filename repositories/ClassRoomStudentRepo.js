@@ -18,7 +18,10 @@ const getByStudentId=(idStudent)=>{
 }
 const getOneById = (id) => {
     return classRoomStudent.findById({ _id: id, active: true });
-  };
+};
+const getOne = (query) => {
+    return classRoomStudent.findOne({ ...query, active: true });
+};
 const deleteOne = (id,session) => {
     return classRoomStudent.findByIdAndDelete(id,{session})
 }
@@ -30,4 +33,4 @@ const updateOne = ({ id, role}, session) => {
       )
       .session(session);
   };
-module.exports = {getOneById,getByClassRoomId, createMany ,getByStudentId,deleteOne,create,updateOne}
+module.exports = {getOne, getOneById, getByClassRoomId, createMany, getByStudentId, deleteOne, create, updateOne}

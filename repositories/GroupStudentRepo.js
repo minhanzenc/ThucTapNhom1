@@ -20,11 +20,14 @@ const deleteOne = (id,session) => {
     return groupStudent.findByIdAndDelete(id,{session})
 }
 const updateOne = ({ id, role}, session) => {
-    return classRoomStudent
+    return groupStudent
       .updateOne(
         { _id: id },
         { role},
       )
       .session(session);
   };
-module.exports = {updateOne,getByGroupId, createMany ,getByStudentId,deleteOne,create}
+  const getOne = (query) => {
+    return groupStudent.findOne({ ...query, active: true });
+};
+module.exports = {getOne,updateOne,getByGroupId, createMany ,getByStudentId,deleteOne,create}
