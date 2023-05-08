@@ -197,7 +197,7 @@ router
         session.endSession();
         if (error instanceof CustomError)
           res.status(error.code).json({ message: error.message });
-        else res.status(500).json({ message: error.message });
+        else res.status(500).json({ message: "Số điện thoại đã tồn tại" });
         console.error(error.toString());
       }
     }

@@ -45,7 +45,6 @@ router.post("/change-password", verifyToken, async (req, res) => {
     // const hashedPassword = await bcrypt.hashSync(newPassword, salt);
     account.password = newPassword;
     await account.save();
-
     return res.status(200).json({ message: "Mật khẩu đã được cập nhật." });
   } catch (error) {
     console.log(error);

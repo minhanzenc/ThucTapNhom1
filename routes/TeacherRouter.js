@@ -34,7 +34,7 @@ router
       }
     }
   )
-  .post("/", verifyToken, authorize(["admin"]), async (req, res) => {
+  .post("/", async (req, res) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {

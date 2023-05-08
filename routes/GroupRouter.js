@@ -6,7 +6,7 @@ const Teacher = require("../models/TeacherModel");
 const Subject = require("../models/SubjectModel");
 const GroupStudent = require("../models/GroupStudentModel");
 const ClassRoom = require("../models/ClassRoomModel");
-const CustomError = require("../errors/CustomError");
+const { CustomError } = require("../errors/CustomError");
 const Request = require("../models/RequestModel");
 const ConditionToCreateGroup = require("../models/ConditiontoCreateGroupModel");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
@@ -63,7 +63,7 @@ router.post("/", verifyToken, authorize(["teacher"]), async (req, res) => {
     res.json(newGroup);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Nhóm đã tồn tại");
+    res.status(500).json({ message: "Nhóm đã tồn tại" });
   }
 });
 
@@ -114,12 +114,16 @@ router.put("/:id", verifyToken, authorize(["teacher"]), async (req, res) => {
     res.status(201).json(updateGroup);
   } catch (error) {
     await session.abortTransaction();
-    session.endSession();
-
     if (error instanceof CustomError)
       res.status(error.code).json({ message: error.message });
-    else res.status(500).json({ message: error.message });
+    else if (11000 === error.code || 11001 === error.code) {
+      res.status(400).json({
+        message: `Tên nhóm đã tồn tại `,
+      });
+    } else res.status(500).json({ message: error.message });
     console.error(error.toString());
+  } finally {
+    session.endSession();
   }
 });
 //lay  dieu kien min max cua group

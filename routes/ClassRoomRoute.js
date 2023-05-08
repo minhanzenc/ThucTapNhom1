@@ -71,8 +71,6 @@ router
         const students = await classRoomStudentServices.getByClassRoomId(
           classRoom._id
         );
-        // console.log("string", students);
-        // console.log("string 2", classRoom);
         return res.status(200).json({ students });
       } catch (error) {
         res.status(500).json(error);
@@ -105,7 +103,11 @@ router
       session.endSession();
       if (error instanceof CustomError)
         res.status(error.code).json({ message: error.message });
-      else res.status(500).json({ message: error.message });
+      else if (11000 === error.code || 11001 === error.code) {
+        res.status(400).json({
+          message: error.message,
+        });
+      } else res.status(500).json({ message: "Tên lớp bị trùng" });
       console.error(error.toString());
     }
   })
@@ -154,7 +156,11 @@ router
         await session.abortTransaction();
         if (error instanceof CustomError)
           res.status(error.code).json({ message: error.message });
-        else res.status(500).json({ message: error.message });
+        else if (11000 === error.code || 11001 === error.code) {
+          res.status(400).json({
+            message: `Tên lớp bị trùng `,
+          });
+        } else res.status(500).json({ message: error.message });
         console.error(error.toString());
       } finally {
         session.endSession();

@@ -26,7 +26,7 @@ function deleteClassRoomDTO(id) {
 }
 function updateClassRoomDTO(id, reqBody) {
     const input = reqBody
-    console.log(input)
+    // console.log(input)
     const errMessages = []
     if (validateString(input.name))
         errMessages.push("trường 'name' chưa hợp lệ")
