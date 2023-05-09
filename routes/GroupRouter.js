@@ -16,6 +16,7 @@ const GroupService = require("../services/GroupService");
 const { checkGroupMax } = require("../middlewares/checkGroupMax");
 const { updateGroupDTO } = require("../dtos/GroupDTO");
 const { default: mongoose } = require("mongoose");
+const groupstudent = require("../models/GroupStudentModel");
 
 //LAY TAT CA NHOM THUOC MON HOC
 //TRUYEN MA MON HOC
@@ -148,7 +149,8 @@ router.delete("/:id", verifyToken, authorize(["teacher"]), async (req, res) => {
     }
 
     await Group.findByIdAndRemove(id);
-
+    await GroupStudent.deleteMany({ r_group: id });
+    
     res.json({ message: "Xóa group thành công" });
   } catch (error) {
     console.error(error.message);

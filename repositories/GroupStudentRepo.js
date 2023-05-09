@@ -21,6 +21,9 @@ const getByStudentId = (idStudent) => {
 const deleteOne = (id, session) => {
   return groupStudent.findByIdAndDelete(id, { session });
 };
+const deleteMany = (r_classroom, session) => {
+  return groupStudent.deleteMany({r_classroom}, { session });
+};
 const updateOne = ({ id, role }, session) => {
   return groupStudent.updateOne({ _id: id }, { role }).session(session);
 };
@@ -39,4 +42,5 @@ module.exports = {
   deleteOne,
   create,
   getOneById,
+  deleteMany,
 };

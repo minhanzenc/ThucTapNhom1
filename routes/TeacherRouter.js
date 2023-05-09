@@ -88,18 +88,16 @@ router
     session.startTransaction();
     try {
       const check = await classRoomServices.getByTeacherId(req.params.id);
+      const teacher=await teacherService.getOneById(req.params.id);
       if (check.length > 0) {
-        throw new CustomError(
-          "Không xóa được vì có tồn tại trong classroom",
-          400
-        );
+        throw new CustomError('Không xóa được vì giáo viên có lớp', 400);
       }
       const teacherDTO = deleteTeacherDTO(req.params.id);
       if (teacherDTO.hasOwnProperty("errMessage"))
         throw new CustomError(teacherDTO.errMessage, 400);
       await teacherService.deleteOne(teacherDTO.data.id, session);
       await session.commitTransaction();
-      res.status(201).json({ message: "xoa thanh cong" });
+      res.status(201).json({ message: "Xóa thành công" });
     } catch (error) {
       await session.abortTransaction();
       session.endSession();

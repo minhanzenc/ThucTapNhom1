@@ -8,6 +8,9 @@ const create = ({ name, r_classroom,r_teacher }, session) => {
 const deleteOne = (id, session) => {
   return group.findByIdAndDelete(id, { session });
 };
+const deleteMany = (r_classroom, session) => {
+  return group.deleteMany({r_classroom}, { session });
+};
 // const getAll = (classRoomId) => {
 //     return group.find({ active: true, r_teacher: classRoomId})
 // }
@@ -53,4 +56,5 @@ module.exports = {
   getOneById,
   updateOne,
   getByClassRoomId,
+  deleteMany,
 };

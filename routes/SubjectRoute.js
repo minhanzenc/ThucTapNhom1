@@ -12,6 +12,8 @@ const {
   updateSubjectDTO,
 } = require("../dtos/SubjectDTO");
 const { verifyToken, authorize } = require("../middlewares/VerifyToken");
+const GroupService = require("../services/GroupService");
+
 router
   .get("/", verifyToken, authorize(["teacher", "admin"]), async (req, res) => {
     try {
@@ -69,14 +71,17 @@ router
         throw new CustomError(subjectDTO.errMessage, 400);
       const classrooms = await classRoomServices.getBySubjectId(req.params.id);
       console.log(classrooms);
+
       for (const classroom of classrooms) {
         const classroomstudent =
           await classRoomStudentServices.getByClassRoomId(classroom._id);
         for (const student of classroomstudent) {
           await classRoomStudentServices.deleteOne(student._id);
         }
+        await GroupService.deleteByClassRoomId(classroom._id, session);
         await classRoomServices.deleteOne(classroom._id, session);
       }
+      
       await subjectServices.deleteOne(subjectDTO.data.id, session);
       await session.commitTransaction();
       res.status(201).json({ message: "xóa thành công" });

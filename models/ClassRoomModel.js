@@ -4,7 +4,6 @@ const classRoomSchema = new mongoose.Schema({
   name: {
     type: String,
     required: 'trường "name" phải được truyền vào',
-    unique: true,
   },
   period: {
     type: String,
@@ -19,6 +18,7 @@ const classRoomSchema = new mongoose.Schema({
     ref: "subject",
   },
 });
+classRoomSchema.index({ r_subject: 1, name: 1 }, { unique: true });
 classRoomSchema.plugin(uniqueValidator, { message: "{VALUE} đã bị trùng" });
 const classroom = mongoose.model("classroom", classRoomSchema);
 module.exports = classroom;
